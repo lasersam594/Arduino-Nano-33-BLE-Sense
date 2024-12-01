@@ -4,8 +4,8 @@
   Copyright 1994-2024 Sam Goldwasser
 
   This example reads the values from the sensors and optionally sends them to the Serial Monitor or Serial Plotter.
-  It also shows Roll, Pitch, and Yaw, as well as proximity in the intensity of the BUILTIN LED, and turn PWR_LED on
-  if tilt (az) is more than ~45 degrees.
+  It also shows Roll, Pitch, and Yaw as the intensities of the RGB LED, as well as proximity in the intensity of the
+  BUILTIN LED, and turns the PWR_LED on if tilt (az) is more than ~45 degrees.
 
   V9: 29-Nov-2024.  Added test to conditionally send data
 */
@@ -29,13 +29,13 @@ void setup() {
   pinMode(LEDG, OUTPUT);
   pinMode(LEDB, OUTPUT);
 
-  // turn all the LEDs off
-  analogWrite(LED_BUILTIN, 0);
-  digitalWrite(LED_PWR, 0);
-  analogWrite(LEDR, 255);
-  analogWrite(LEDG, 255);
-  analogWrite(LEDB, 255);
-
+  // Turn the LED_BUILTIN and LED_PWR on and set the RGB LEDs at low brightness
+  analogWrite(LED_BUILTIN, 255);
+  digitalWrite(LED_PWR, 1);
+  analogWrite(LEDR, 200);
+  analogWrite(LEDG, 200);
+  analogWrite(LEDB, 200);
+  
   if (data1 == 1) {
      Serial.begin(9600);
      while (!Serial);

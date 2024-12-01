@@ -6,7 +6,7 @@ In addition:
 
 1. Gyroscope: Displays the absolute value for Roll, Pitch, and Yaw as the brightness of the red, green, and blue RGB LEDs.
 2. Proximity: Displays the distance as the brightness of the BUILTIN_LED (bright is closest).
-3. Tilt (accelerometer Z value): Turns on the PWR_LED if more than approximately 45 degrees.
+3. Static tilt (accelerometer Z value): Turns on the PWR_LED if more than approximately 45 degrees.
 4. The PWR_LED also flashes at an approximately 1 Hz rate if there is no Gyroscope or Proximity activity.
 
 Suggestions for (modest!) improvements welcome.

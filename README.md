@@ -1,1 +1,0 @@
-These are simple utilities to test most of the Nano BLE 33 Sense Ver1 and Ver2 sensors using the on-board LEDs and serial port.  The required Nano BLE 33 libraries are all either built into the Arduino IDE or Arduino Cloud Editor, or readily found with a Web search.

@@ -5,7 +5,8 @@
 
   This example reads the values from the sensors and optionally sends them to the Serial Monitor or Serial Plotter.
   It also shows Roll, Pitch, and Yaw as the intensities of the RGB LED, as well as proximity in the intensity of the
-  BUILTIN LED, and turns the PWR_LED on if tilt (az) is more than ~45 degrees.
+  BUILTIN LED, and turns the PWR_LED on if tilt (az) is more than ~45 degrees.  The BUILTIN_LED pulses at a roughly
+   1 Hz rate as a heartbeat if gyro and proximity are not active.
 
   V9: 29-Nov-2024.  Added test to conditionally send data
 */
@@ -19,6 +20,7 @@
 #include <Arduino_APDS9960.h>      // RGB light and proximity
 
 int proximity = 0;
+int count = 0;
 
 void setup() {
 
@@ -74,7 +76,7 @@ void setup() {
 void loop() {
   float ax, ay, az, gr, gp, gy, mx, my, mz;
   char buffer[40];
-  int led = 0;
+  int led, ledr, ledp, ledy;
 
 // Accelerometer
 
@@ -96,7 +98,7 @@ void loop() {
       }
 
      led = (az * 255);
-     if (led < 180) digitalWrite(LED_PWR, HIGH); // Turn on LED_PWR if tilt more than ~45 degrees
+     if (led < 180) digitalWrite(LED_PWR, HIGH); // Turn on LED_PWR if tilt is more than ~45 degrees
       else digitalWrite(LED_PWR, LOW);
      
      // analogWrite(LED_PWR, led); // Using analogWrite hangs here, even with a cosntant???
@@ -124,14 +126,14 @@ void loop() {
         if (verbose1 == 1) Serial.print(" | ");
       }
 
-      led = gr - GR_COR;
-      analogWrite(LEDR,255-abs(led/8));
+      ledr = abs(gr - GR_COR)/8;
+      analogWrite(LEDR,255-ledr);
     
-      led = gp - GP_COR;
-      analogWrite(LEDG,255-abs(led/8));
+      ledp = abs(gp - GP_COR)/8;
+      analogWrite(LEDG,255-ledp);
 
-      led = gy - GY_COR;
-      analogWrite(LEDB,255-abs(led/8));
+      ledy = abs(gy - GY_COR)/8;
+      analogWrite(LEDB,255-ledy);
     }
 
 // Magnetic field
@@ -208,5 +210,11 @@ void loop() {
         Serial.print(buffer);
         Serial.println("");
    }
+ 
+  count++;
+  if (count == 15) {
+    if((proximity > 230) && (ledr == 0) && (ledp == 0) &&  (ledy == 0)) analogWrite(LED_BUILTIN,255);
+    count = 0;
+  }
   delay(25); 
 }

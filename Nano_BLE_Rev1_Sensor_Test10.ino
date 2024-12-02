@@ -248,8 +248,6 @@ void loop() {
     sum = 0;
 
     for (i = 0; i < samplesRead; i++) if (abs(sampleBuffer[i]) > sum) sum = abs(sampleBuffer[i]); // Peak detect
- //    for (i = 0; i < samplesRead; i++) if ((j = abs(sampleBuffer[i]) > sum)) sum = j; // Peak detect
-      // Serial.println(sum);
   }
 
  if (data1 == 1) {

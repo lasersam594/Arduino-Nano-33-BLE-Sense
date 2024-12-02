@@ -12,8 +12,8 @@
   V10: 2-Dec-2024.
 */
 
-#define verbose1 0                 // Display labels if 1, data-only if 0
-#define data1 0                    // Sends data if 1, LEDs-only on Nano if 0
+#define verbose1 1                 // Display labels if 1, data-only if 0
+#define data1 1                     // Sends data if 1, LEDs-only on Nano if 0
 
 #define BLACK 0,0,0
 #define VIOLET 25,0,50
@@ -237,9 +237,11 @@ void loop() {
         if (verbose1 == 1) Serial.print(" B: ");
         sprintf(buffer, "%3d", b/16 );
         Serial.print(buffer);
-        Serial.println("");
+ 
    }
 
+  // Microphone
+ 
   // wait for samples to be read
   if (samplesRead) {
     int i = 0;
@@ -250,22 +252,28 @@ void loop() {
       // Serial.println(sum);
   }
 
-// check the sound value
-    if (((abs(gr - GR_COR) < 2) && (abs(gp - GP_COR) < 2) && (abs(gy - GY_COR)) < 2)) {
+ if (data1 == 1) {
+     if (verbose1 == 1) Serial.print(" | Mic: ");
+        sprintf(buffer, "%4d", sum / 8 );
+        Serial.print(buffer);
+        Serial.println("");
+   }
+
+
+// Display the peak sound value in RGB_LED
+    if (((abs(gr - GR_COR) < 2) && (abs(gp - GP_COR) < 2) && (abs(gy - GY_COR)) < 2)) { // Only if no Gyro activity
       if (sum >= 600) RGB_LED_Color(RED);         // Red
       else if (sum >= 500) RGB_LED_Color(ORANGE); // Orange
       else if (sum >= 300) RGB_LED_Color(YELLOW); // Yellow
       else if (sum >= 200) RGB_LED_Color(GREEN);  // Green
       else if (sum >= 150) RGB_LED_Color(CYAN);   // Cyan
       else if (sum >= 100) RGB_LED_Color(BLUE);   // Blue
-      else if (sum >= 50) RGB_LED_Color(VIOLET);  // Violet
-      else if (sum >= 0) RGB_LED_Color(BLACK);    // Black
+      else if (sum >= 50)  RGB_LED_Color(VIOLET); // Violet
+      else if (sum >= 0)   RGB_LED_Color(BLACK);  // Black
     }
   
 // clear the read count
-    samplesRead = 0;
-  
-
+  samplesRead = 0;
   count++;
   if (count >= 15) {
     if((proximity > 230) && (ledr == 0) && (ledp == 0) &&  (ledy == 0)) analogWrite(LED_BUILTIN,255);

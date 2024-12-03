@@ -18,9 +18,9 @@
 #define BLACK 0,0,0
 #define GRAY 12,12,12
 #define MAGENTA 25,0,50
-#define BLUE 0,0,255
-#define CYAN 0,255,255
-#define GREEN 0,0,255
+#define BLUE 0,0,200
+#define CYAN 0,127,127
+#define GREEN 0,255,0
 #define YELLOW 255,50,0
 #define ORANGE 255,125,0
 #define RED 255,0,0
@@ -264,9 +264,9 @@ void loop() {
   if (((abs(gr - GR_COR) < 2) && (abs(gp - GP_COR) < 2) && (abs(gy - GY_COR)) < 2)) { // Only if no Gyro activity
     if (sum >= 500) RGB_LED_Color(RED);
     else if (sum >= 400) RGB_LED_Color(ORANGE);
-    else if (sum >= 300) RGB_LED_Color(YELLOW);
-    else if (sum >= 200) RGB_LED_Color(GREEN);
-    else if (sum >= 150) RGB_LED_Color(CYAN);
+    else if (sum >= 325) RGB_LED_Color(YELLOW);
+    else if (sum >= 250) RGB_LED_Color(GREEN);
+    else if (sum >= 175) RGB_LED_Color(CYAN);
     else if (sum >= 100) RGB_LED_Color(BLUE);
     else if (sum >= 50)  RGB_LED_Color(MAGENTA);
     else if (sum >= 25)  RGB_LED_Color(GRAY);

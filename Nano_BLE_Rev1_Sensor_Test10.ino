@@ -5,18 +5,19 @@
 
   This example reads the values from the sensors and optionally sends them to the Serial Monitor or Serial Plotter.
   It also shows Roll, Pitch, and Yaw as the intensities of the RGB LED, as well as proximity in the intensity of the
-  BUILTIN LED, and turns the PWR_LED on if tilt (az) is more than ~45 degrees.  The BUILTIN_LED pulses at a roughly
-  1 Hz rate as a heartbeat if gyro and proximity are not active.  And reads data from the built-in microphone and
-  sends peak-detected audio to the RGB LED iff there is no activity on the Gyro and vice-versa.
+  BUILTIN LED, and turns the PWR_LED on if tilt (az) is more than ~45 degrees.  It also reads data from the built-in
+  microphone and sends peak-detected audio to the RGB LED iff there is no activity on the Gyro and vice-versa.
+  The BUILTIN_LED pulses at a roughly 1 Hz rate as a heartbeat if gyro, proximity, and audio are not active. 
 
   V10: 2-Dec-2024.
 */
 
 #define verbose1 1                 // Display labels if 1, data-only if 0
-#define data1 1                     // Sends data if 1, LEDs-only on Nano if 0
+#define data1 1                    // Sends data if 1, LEDs-only on Nano if 0
 
 #define BLACK 0,0,0
-#define VIOLET 25,0,50
+#define GRAY 12,12,12
+#define MAGENTA 25,0,50
 #define BLUE 0,0,255
 #define CYAN 0,255,255
 #define GREEN 0,0,255
@@ -222,11 +223,7 @@ void loop() {
 
   while (!APDS.colorAvailable()) delay(5);
   APDS.readColor(r, g, b);
-/*
-  if (r > 16) analogWrite(LEDR, 255-(r/16)); // Removed due to useless behavior. ;-)
-  if (g > 16) analogWrite(LEDG, 255-(g/16)); 
-  if (b > 16) analogWrite(LEDB, 255-(b/16)); 
-*/
+
    if (data1 == 1) {
      if (verbose1 == 1) Serial.print(" | Light R: ");
         sprintf(buffer, "%3d", r/16 );
@@ -237,7 +234,6 @@ void loop() {
         if (verbose1 == 1) Serial.print(" B: ");
         sprintf(buffer, "%3d", b/16 );
         Serial.print(buffer);
- 
    }
 
   // Microphone
@@ -258,16 +254,18 @@ void loop() {
    }
 
 
-// Display the peak sound value in RGB_LED
+   // Display the peak sound value in RGB_LED
+    sum *= 1; // Light show sensitivity. ;-)
     if (((abs(gr - GR_COR) < 2) && (abs(gp - GP_COR) < 2) && (abs(gy - GY_COR)) < 2)) { // Only if no Gyro activity
-      if (sum >= 600) RGB_LED_Color(RED);         // Red
-      else if (sum >= 500) RGB_LED_Color(ORANGE); // Orange
-      else if (sum >= 300) RGB_LED_Color(YELLOW); // Yellow
-      else if (sum >= 200) RGB_LED_Color(GREEN);  // Green
-      else if (sum >= 150) RGB_LED_Color(CYAN);   // Cyan
-      else if (sum >= 100) RGB_LED_Color(BLUE);   // Blue
-      else if (sum >= 50)  RGB_LED_Color(VIOLET); // Violet
-      else if (sum >= 0)   RGB_LED_Color(BLACK);  // Black
+      if (sum >= 600) RGB_LED_Color(RED);
+      else if (sum >= 500) RGB_LED_Color(ORANGE);
+      else if (sum >= 300) RGB_LED_Color(YELLOW);
+      else if (sum >= 200) RGB_LED_Color(GREEN);
+      else if (sum >= 150) RGB_LED_Color(CYAN);
+      else if (sum >= 100) RGB_LED_Color(BLUE);
+      else if (sum >= 50)  RGB_LED_Color(MAGENTA);
+      else if (sum >= 25)  RGB_LED_Color(GRAY);
+      else if (sum >= 0)   RGB_LED_Color(BLACK);
     }
   
 // clear the read count

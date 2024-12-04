@@ -17,9 +17,9 @@
   board-specific Gyro offsets (if needed - estimate average value needed from serial data).
 */
 
-// Nano BLE 33 Sense version
-#define Rev1           // Select based on specific board  
-//#define Rev2
+// Select Nano BLE 33 Sense version
+// #define Rev1        // Select based on specific board  
+#define Rev2
 
 // Data transmission
 #define verbose1 0     // Display labels if 1, data-only if 0
@@ -78,7 +78,7 @@ volatile int samplesRead;
 
 void setup() {
   
-   // Set the LEDs pins as outputs
+  // Set the LEDs pins as outputs
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_PWR, OUTPUT);
   pinMode(LEDR, OUTPUT);
@@ -93,10 +93,10 @@ void setup() {
   analogWrite(LEDB, 200);
   
   if (data1 == 1) {
-     Serial.begin(9600);
-     while (!Serial);
-     Serial.println("Started.");
-     }
+    Serial.begin(9600);
+    while (!Serial);
+    Serial.println("Started.");
+    }
 
   // configure the data receive callback
   PDM.onReceive(onPDMdata);
@@ -108,11 +108,11 @@ void setup() {
 
 // Version-specific libraries
 #ifdef Rev1
-    if (!HTS.begin()) {
+  if (!HTS.begin()) {
 #endif
  
 #ifdef Rev2   
-    if (!HS300x.begin()) {
+  if (!HS300x.begin()) {
 #endif
 
 // Startup
@@ -129,7 +129,7 @@ void setup() {
     if (data1 == 1) Serial.println("Error initializing APDS9960 sensor!");
     }
  
-  // Microphone (one channel, mono mode, 16 kHz sample rate.
+  // Microphone (one channel, mono mode. The only sample rates that work so far are 16.000 kHz and 41.667 kHz.  Go figure. ;-)
   if (!PDM.begin(1, 16000)) {
     Serial.println("Failed to start PDM!");
     while (1);
@@ -159,73 +159,62 @@ void loop() {
 // Accelerometer
 
   while (!IMU.accelerationAvailable()) {}
-    {
-      IMU.readAcceleration(ax, ay, az);
- 
-      if (data1 == 1) {
-        if (verbose1 == 1) Serial.print("Axl (Gs) X: ");
-        sprintf(buffer, "%5.2f", ax );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print(" Y: ");
-        sprintf(buffer, "%5.2f", ay );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print(" Z: ");
-        sprintf(buffer, "%5.2f"  , az );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print(" | ");
-      }
+  IMU.readAcceleration(ax, ay, az);
+  if (data1 == 1) {
+    if (verbose1 == 1) Serial.print("Axl (Gs) X: ");
+    sprintf(buffer, "%5.2f", ax );
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print(" Y: ");
+    sprintf(buffer, "%5.2f", ay );
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print(" Z: ");
+    sprintf(buffer, "%5.2f"  , az );
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print(" | ");
+  }
 
-     led = (az * 255);
-     if (led < 180) digitalWrite(LED_PWR, HIGH); // Turn on LED_PWR if tilt is more than ~45 degrees
-      else digitalWrite(LED_PWR, LOW);
-     
-     // analogWrite(LED_PWR, led); // Using analogWrite hangs here, even with a cosntant???
-    }
-
+  led = (az * 255);
+  if (led < 180) digitalWrite(LED_PWR, HIGH); // Turn on LED_PWR if tilt is more than ~45 degrees
+     else digitalWrite(LED_PWR, LOW);         // analogWrite(LED_PWR, led); // Using analogWrite hangs here, even with a cosntant???
+    
 // Gyroscope
 
   while (!IMU.gyroscopeAvailable()) {}
-    {
-      IMU.readGyroscope(gr, gp, gy);
-      if (data1 == 1) {
-        if (verbose1 == 1) Serial.print("Gyro (Degs/s) R: ");
-        sprintf(buffer, "%8.2f", gr - GR_COR );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print( "  P: ");
-        sprintf(buffer, "%8.2f", gp - GP_COR );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print( "  Y: ");
-        sprintf(buffer, "%8.2f"  , gy - GY_COR);
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print(" | ");
-      }
+  IMU.readGyroscope(gr, gp, gy);
+  if (data1 == 1) {
+    if (verbose1 == 1) Serial.print("Gyro (Degs/s) R: ");
+    sprintf(buffer, "%8.2f", gr - GR_COR );
+     Serial.print(buffer);
+    if (verbose1 == 1) Serial.print( "  P: ");
+    sprintf(buffer, "%8.2f", gp - GP_COR );
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print( "  Y: ");
+    sprintf(buffer, "%8.2f"  , gy - GY_COR);
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print(" | ");
+  }
 
-      ledr = abs(gr - GR_COR)/8;
-      ledp = abs(gp - GP_COR)/8;
-      ledy = abs(gy - GY_COR)/8;
-      if ((ledr > 8) || (ledp > 8) || (ledy > 8)) RGB_LED_Color(ledr, ledp, ledy);
-
-    }
+  ledr = abs(gr - GR_COR)/2;
+  ledp = abs(gp - GP_COR)/2;
+  ledy = abs(gy - GY_COR)/2;
+  if ((ledr > 8) || (ledp > 8) || (ledy > 8)) RGB_LED_Color(ledr, ledp, ledy);
 
 // Magnetic field
 
-  while (!IMU.magneticFieldAvailable()) {}
-    {
-      IMU.readMagneticField(mx, my, mz);
-      if (data1 == 1) {
-
-      if (verbose1 == 1) Serial.print("Field (Gauss) X: ");
-        sprintf(buffer, "%5.2f", mx/100 );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print( "  Y: ");
-        sprintf(buffer, "%5.2f", my/100 );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print( "  Z: ");
-        sprintf(buffer, "%5.2f", mz/100 );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print(" |");
-      }
-    }
+  while (!IMU.magneticFieldAvailable()) {}    
+  IMU.readMagneticField(mx, my, mz);
+  if (data1 == 1) {
+    if (verbose1 == 1) Serial.print("Field (Gauss) X: ");
+    sprintf(buffer, "%5.2f", mx/100 );
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print( "  Y: ");
+    sprintf(buffer, "%5.2f", my/100 );
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print( "  Z: ");
+    sprintf(buffer, "%5.2f", mz/100 );
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print(" |");
+  }
 
 // Temperature, humidity, and pressure
 
@@ -271,37 +260,37 @@ void loop() {
   while (!APDS.colorAvailable()) delay(5);
   APDS.readColor(r, g, b);
 
-   if (data1 == 1) {
-     if (verbose1 == 1) Serial.print(" | Light R: ");
-        sprintf(buffer, "%3d", r/16 );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print(" G: ");
-        sprintf(buffer, "%3d", g/16 );
-        Serial.print(buffer);
-        if (verbose1 == 1) Serial.print(" B: ");
-        sprintf(buffer, "%3d", b/16 );
-        Serial.print(buffer);
-   }
+  if (data1 == 1) {
+    if (verbose1 == 1) Serial.print(" | Light R: ");
+    sprintf(buffer, "%3d", r/16 );
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print(" G: ");
+    sprintf(buffer, "%3d", g/16 );
+    Serial.print(buffer);
+    if (verbose1 == 1) Serial.print(" B: ");
+    sprintf(buffer, "%3d", b/16 );
+      Serial.print(buffer);
+  }
 
-  // Microphone
+// Microphone
 
   // wait for samples to be read
-   if (samplesRead) {
-     int i = 0;
-     sum = 0;
+  if (samplesRead) {
+    int i = 0;
+    sum = 0;
 
-     for (i = 0; i < samplesRead; i++) if (abs(sampleBuffer[i]) > sum) sum = abs(sampleBuffer[i]); // Peak detect
-   }
+    for (i = 0; i < samplesRead; i++) if (abs(sampleBuffer[i]) > sum) sum = abs(sampleBuffer[i]); // Peak detect
+  }
 
-   if (data1 == 1) {
-      if (verbose1 == 1) Serial.print(" | Mic: ");
-         sprintf(buffer, "%4d", sum );
-         Serial.print(buffer);
-         Serial.println("");
-   }
+  if (data1 == 1) {
+    if (verbose1 == 1) Serial.print(" | Mic: ");
+    sprintf(buffer, "%4d", sum );
+    Serial.print(buffer);
+    Serial.println("");
+    }
 
-  // Display the peak sound value in RGB_LED
-   sum *= 1; // Light show sensitivity. ;-)
+// Display the peak sound value in RGB_LED
+  sum *= 1; // Light show sensitivity. ;-)
   if (((abs(gr - GR_COR) < 1) && (abs(gp - GP_COR) < 1) && (abs(gy - GY_COR)) < 1)) { // Only if no Gyro activity
     if (sum >= 500) RGB_LED_Color(RED);
     else if (sum >= 400) RGB_LED_Color(ORANGE);
@@ -312,7 +301,7 @@ void loop() {
     else if (sum >= 50)  RGB_LED_Color(MAGENTA);
     else if (sum >= 25)  RGB_LED_Color(GRAY);
     else if (sum >= 0)   RGB_LED_Color(BLACK);
-    }
+  }
   
 // clear the read count
   samplesRead = 0;
@@ -320,7 +309,8 @@ void loop() {
   if (count >= 8) {
     if((proximity > 230) && (ledr == 0) && (ledp == 0) &&  (ledy == 0) && (sum < 25)) analogWrite(LED_BUILTIN,255); // Heartbeat
     count = 0;
-  }
+    }
+
   delay(25); 
 }
 
@@ -338,5 +328,5 @@ void onPDMdata() {
   PDM.read(sampleBuffer, bytesAvailable);
 
   // 16-bit, 2 bytes per sample
-    samplesRead = bytesAvailable / 2;
+  samplesRead = bytesAvailable / 2;
   }

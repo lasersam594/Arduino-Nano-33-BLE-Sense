@@ -22,8 +22,8 @@
 #define Rev2
 
 // Data transmission
-#define verbose1 0     // Display labels if 1, data-only if 0
-#define data1 0        // Sends data if 1, LEDs-only on Nano if 0
+#define data1 1        // Sends data if 1, LEDs-only on Nano if 0
+#define verbose1 1     // Display labels if 1, data-only if 0
 
 // Board-specific corrections for possible Gyro offsets
 #ifdef Rev1

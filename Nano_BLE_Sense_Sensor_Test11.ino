@@ -312,6 +312,7 @@ void loop() {
   // clear the read count
   samplesRead = 0; // Clear sample buffer
 
+  // Optional diagnostic field
   if (senddiag1 == 1) {
     if (data1 == 1) {
       if (verbose1 == 1) Serial.print(" | Diag: ");
@@ -321,9 +322,10 @@ void loop() {
     }
   }
 
+  // Heartbeat
   count++;
   if (count >= 8) {
-    if((proximity > 230) && (ledr == 0) && (ledp == 0) &&  (ledy == 0) && (sum < 25)) analogWrite(LED_BUILTIN,255); // Heartbeat
+    if((proximity > 230) && (ledr == 0) && (ledp == 0) &&  (ledy == 0) && (sum < 25)) analogWrite(LED_BUILTIN,255); // Pulse led
     count = 0;
   }
 

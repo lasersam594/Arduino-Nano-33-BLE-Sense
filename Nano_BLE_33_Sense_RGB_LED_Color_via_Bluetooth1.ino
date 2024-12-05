@@ -1,14 +1,15 @@
 /*
-This is a slightly fluffed up version of the tutorial sketch "Controlling RGB LED Through Bluetooth®"
-at https://docs.arduino.cc/tutorials/nano-33-ble-sense/bluetooth/ .
+This is a slightly fluffed up version of the tutorial sketch "Controlling RGB LED Through
+Bluetooth®" at https://docs.arduino.cc/tutorials/nano-33-ble-sense/bluetooth/ .
 
-Tested using LightBlue iPhone App.  Compile the sketch, open the App, select the device,
-select the ">" next to "Properties: Read, Write"" under Device Information.  The BUILTIN_LED
-should come on indicating that the Nano has connected, and the RGB LEDs will cycle through
-a rainbow of colors just to show off.  Then, to set a specific color, touch "Write new value"
-and enter a HEX number from 1 to B. 
+Tested using the LightBlue iPhone App.  Compile the sketch and the RGB LEDs will cycle through a
+rainbow of colors just to show off.  Then, using LightBlue or something similar, touch "Connect"
+when Arduino comes up.  The BUILTIN_LED should come on indicating that the Nano has connected and
+and the RGB LEDs will go to black.  Select the ">" next to "Properties: Read, Write" under Device
+Information. To set a specific color, touch "Write new value" and enter a HEX number from 1 to B. 
+Yes, this gets rather boring rather quickly, but it should be painless. ;-)
 
-Modified by Samuel M. Goldwasser, no copyright, do with it as you see fit. ;-)
+Modified from original by Samuel M. Goldwasser, no copyright, do with it as you see fit. ;-)
 */
 
 #include <ArduinoBLE.h>

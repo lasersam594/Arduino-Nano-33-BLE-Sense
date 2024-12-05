@@ -1,21 +1,29 @@
 /*
-  Arduino Nano 33 BLE Sense Rev2: Simple Accelerometer, Gyroscope, Magnetic Field, Environmental, Proximity, and Light Sensor Test
+Nano BLE 33 Sense Sensor Test V11.
 
-  Copyright (c) 1994-2024 Sam Goldwasser, all rights reserved
+Copyright (c) 1994-2024 Sam Goldwasser, all rights reserved.  Permission is granted for public use or modification as long
+as the Copyright notice is included.
 
-  This example reads the values from the sensors and optionally sends them to the Serial Monitor or Serial Plotter.
-  It also shows Roll, Pitch, and Yaw as the intensities of the RGB LED, as well as proximity in the intensity of the
-  BUILTIN LED, and turns the PWR_LED on if tilt (az) is more than ~45 degrees.  It also reads data from the built-in
-  microphone and sends peak-detected audio to the RGB LED iff there is no activity on the Gyro and vice-versa.
-  The BUILTIN_LED pulses at a roughly 1 Hz rate as a heartbeat if gyro, proximity, and audio are not active. 
-  A diagnostic variable (int) may be sent as well for, uh, diagnostic purposes. ;-)
+This a simple utility to exercise most of the Nano BLE 33 Sense Ver1 or Ver2 sensors using the on-board LEDs and serial port.
+The required Nano BLE 33 libraries are all either built into the Arduino IDE or Arduino Cloud Editor, or readily found via
+a Web search.  Note that the primary difference between the Ver1 and Ver2 sketches are the libraries for the IMU and T/H.
 
-  Select #define values for data and verbose to determine what, if any, data is setn to serial port.
+Accelerometer (Gs) X, Y, Z; Gyroscope (Degs/s) Roll, Pitch, Yaw; Magnetic Field (Gauss) X, Y, Z; Temperature (DegC),
+Pressure (mm/Hg), Humidity (%), Proximity (Prox), RGB Light Detect (R, G, B) values, and peak Mic values are all optionally
+sent via the serial port as data-only, or with labels.
 
-  Permission is granted for public use or modification as long as the Copyright notice is included.
+In addition, the on-board BUILTIN_LED, PWR_LED, and RGB_LED provide visual output:
 
-  V10: Combined for Nano BLE Sense Ver1 and Ver2, 3-Dec-2024.  Select the appropriate #define Ver statement and the
-  board-specific Gyro offsets (if needed - estimate average value needed from serial data).
+1. Gyroscope: Displays the absolute value for Roll, Pitch, and Yaw as the brightness of the RGB leds.
+2. Proximity: Displays the distance as the brightness of the BUILTIN_LED (bright is closest).
+3. Static Tilt (accelerometer Z value): Turns on the PWR_LED if more than approximately 45 degrees.
+4. Microphone: Displays the peak intensity of the audio on a color scale using the RGB leds.
+5. Heartbeat: The BUILTIN_LED flashes at an approximately 1 Hz rate if there is no display activity.
+
+To select the Nano BLE 33 Sense board type (Ver1 or Ver2), edit the #define at the beginning of the sketch.
+To select whether data is send to the serial port and what type, edit the #defines data1 and verbose1.
+
+Suggestions for (modest!) improvements welcome.
 */
 
 // Select Nano BLE 33 Sense Rev1 or Rev2
@@ -25,7 +33,6 @@
 #define data1 1        // Sends data if 1, LEDs-only on Nano if 0
 #define verbose1 1     // Display labels if 1, data-only if 0
 #define senddiag1 0    // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
-
 
 // Board-specific corrections for possible Gyro offsets
 #ifdef Rev1
@@ -47,8 +54,8 @@
 #define BLUE 0,0,75
 #define CYAN 0,63,63
 #define GREEN 0,192,0
-#define YELLOW 128,85,0
-#define ORANGE 225,40,0
+#define YELLOW 128,92,0
+#define ORANGE 200,40,0
 #define RED 255,0,0
 #define WHITE 255,255,255
 

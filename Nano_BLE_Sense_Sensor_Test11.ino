@@ -47,8 +47,8 @@
 #define BLUE 0,0,75
 #define CYAN 0,63,63
 #define GREEN 0,192,0
-#define YELLOW 255,50,0
-#define ORANGE 255,125,0
+#define YELLOW 128,85,0
+#define ORANGE 225,40,0
 #define RED 255,0,0
 #define WHITE 255,255,255
 

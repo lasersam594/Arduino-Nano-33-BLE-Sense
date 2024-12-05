@@ -6,8 +6,9 @@ Tested using the LightBlue iPhone App.  Compile the sketch and the RGB LEDs will
 rainbow of colors just to show off.  Then, using LightBlue or something similar, touch "Connect"
 when Arduino comes up.  The BUILTIN_LED should come on indicating that the Nano has connected and
 and the RGB LEDs will go to black.  Select the ">" next to "Properties: Read, Write" under Device
-Information. To set a specific color, touch "Write new value" and enter a HEX number from 1 to B. 
-Yes, this gets rather boring rather quickly, but it should be painless. ;-)
+Information. To set a specific color, touch "Write new value" and enter a HEX number from 1 to B.
+Back up to the device selection screen to disconnect.  Yes, this gets rather boring rather
+quickly, but it should be painless. ;-)
 
 Modified from original by Samuel M. Goldwasser, no copyright, do with it as you see fit. ;-)
 */

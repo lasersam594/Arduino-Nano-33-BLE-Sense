@@ -10,7 +10,7 @@ In addition the on-board BUILTIN_LED, PWR_LED, and RGB_LED provide visual output
 4. Microphone: Displays the peak intensity of the audio on a color scale using the RGB leds.
 5. Heartbeat: The BUILTIN_LED flashes at an approximately 1 Hz rate if there is no display activity.
 
-To select the Nano BLE 33 Sense board type (Ver1 or Ver2), enable the appropriate #define at the beginning of the sketch.
+To select the Nano BLE 33 Sense board type (Ver1 or Ver2), edit the #define at the beginning of the sketch.
 
 Suggestions for (modest!) improvements welcome.
 

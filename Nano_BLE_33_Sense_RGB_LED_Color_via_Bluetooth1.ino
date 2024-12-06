@@ -6,8 +6,8 @@ Tested using the LightBlue iPhone App.  Compile the sketch and the RGB LEDs will
 rainbow of colors just to show off.  Then, using LightBlue or something similar, touch "Connect"
 when Arduino comes up.  The BUILTIN_LED should come on indicating that the Nano has connected and
 and the RGB LEDs will go to black.  Select the ">" next to "Properties: Read, Write" under Device
-Information. To set a specific color, touch "Write new value" and enter a HEX number from 1 to B.
-Back up to the device selection screen to disconnect.  Yes, this gets rather boring rather
+Information.  To set a specific color, touch "Write new value" and enter a HEX number from 1 to B.
+Back up to the Peripheral selection screen to disconnect.  Yes, this gets rather boring rather
 quickly, but it should be painless. ;-)
 
 Modified from original by Samuel M. Goldwasser, no copyright, do with it as you see fit. ;-)
@@ -79,63 +79,21 @@ void loop() {
 
     // while the central is still connected to peripheral:
     while (central.connected()) {
-      // if the remote device wrote to the characteristic, use the value to control the LED:
+      // if the remote device wrote to the characteristic, use the value to control the RGB LEDs:
       if (switchCharacteristic.written()) {
         switch (switchCharacteristic.value()) {   // any value other than 0
-         
-          case 1:
-            Serial.println("LEDs OFF");
-            RGB_LED_Color(BLACK);
-            break;
-
-          case 2:
-            Serial.println("LEDs Gray");
-            RGB_LED_Color(GRAY);
-            break;
-
-          case 3:
-            Serial.println("LEDs Magenta");
-            RGB_LED_Color(MAGENTA);
-            break;\
-
-          case 4:
-            Serial.println("LEDs Blue");
-            RGB_LED_Color(BLUE);
-            break;
-
-          case 5:
-            Serial.println("LEDs Cyan");
-            RGB_LED_Color(CYAN);
-            break;
-
-          case 6:
-            Serial.println("LEDs Green");
-            RGB_LED_Color(GREEN);
-            break;
-
-          case 7:
-            Serial.println("LEDs Yellow");
-            RGB_LED_Color(YELLOW);
-            break;
-          
-          case 8:
-            Serial.println("LEDs Orange");
-            RGB_LED_Color(ORANGE);
-            break;
-          
-          case 9:
-            Serial.println("LEDs Red");
-            RGB_LED_Color(RED);
-            break;
-          
-          case 10:
-            Serial.println("LEDs White");
-            RGB_LED_Color(WHITE);
-            break;
-
-          case 11:
-            RGB_LED_Cycle_Colors();
-            break;
+          case 1: Serial.println("LEDs OFF"); RGB_LED_Color(BLACK); break;
+          case 2: Serial.println("LEDs Gray"); RGB_LED_Color(GRAY); break;
+          case 3: Serial.println("LEDs Magenta"); RGB_LED_Color(MAGENTA); break;
+          case 4: Serial.println("LEDs Blue"); RGB_LED_Color(BLUE); break;
+          case 5: Serial.println("LEDs Cyan"); RGB_LED_Color(CYAN); break;
+          case 6: Serial.println("LEDs Green"); RGB_LED_Color(GREEN); break;
+          case 7: Serial.println("LEDs Yellow"); RGB_LED_Color(YELLOW); break;          
+          case 8: Serial.println("LEDs Orange"); RGB_LED_Color(ORANGE); break;
+          case 9: Serial.println("LEDs Red"); RGB_LED_Color(RED); break;          
+          case 10: Serial.println("LEDs White"); RGB_LED_Color(WHITE); break;
+          case 11: RGB_LED_Cycle_Colors();
+          break;
         }
       }
     }
@@ -144,26 +102,33 @@ void loop() {
     Serial.print(F("Disconnected from central: "));
     Serial.println(central.address());
     digitalWrite(LED_BUILTIN, LOW);         // when the central disconnects, turn off the LED
-    }
-    // Cycle RGB LED colors while idle
-    RGB_LED_Cycle_Colors();
   }
+
+  // Cycle RGB LED colors while idle
+  RGB_LED_Cycle_Colors();
+}
 
 void RGB_LED_Color(int r, int g, int b) {
   analogWrite(LEDR,255-r);
   analogWrite(LEDG,255-g);
   analogWrite(LEDB,255-b);
-  }
+}
 
 void RGB_LED_Cycle_Colors() {
-  RGB_LED_Color(GRAY); delay(100);
-  RGB_LED_Color(MAGENTA); delay(100);
-  RGB_LED_Color(BLUE); delay(100);
-  RGB_LED_Color(CYAN); delay(100);
-  RGB_LED_Color(GREEN); delay(100);
-  RGB_LED_Color(YELLOW); delay(100);
-  RGB_LED_Color(ORANGE); delay(100);
-  RGB_LED_Color(RED); delay(100);
-  RGB_LED_Color(WHITE); delay(100);
-  RGB_LED_Color(BLACK);
-  }
+  RGB_LED_Color(BLACK); delay(50);
+  RGB_LED_Color(GRAY); delay(50);
+  RGB_LED_Color(MAGENTA); delay(50);
+  RGB_LED_Color(BLUE); delay(50);
+  RGB_LED_Color(CYAN); delay(50);
+  RGB_LED_Color(GREEN); delay(50);
+  RGB_LED_Color(YELLOW); delay(50);
+  RGB_LED_Color(ORANGE); delay(50);
+  RGB_LED_Color(RED); delay(50);
+  RGB_LED_Color(ORANGE); delay(50);
+  RGB_LED_Color(YELLOW); delay(50);
+  RGB_LED_Color(GREEN); delay(50);
+  RGB_LED_Color(CYAN); delay(50);
+  RGB_LED_Color(BLUE); delay(50);
+  RGB_LED_Color(MAGENTA); delay(50);
+  RGB_LED_Color(GRAY); delay(50);
+}

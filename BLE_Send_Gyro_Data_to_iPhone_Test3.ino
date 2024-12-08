@@ -1,7 +1,8 @@
-// Nano BLE 33 Sense Gyro Data Send to BLE intended for IOS (iPhone or iPad).
-// This sketch send the Roll, Pitch, and Yaw values to BLE along with a serial number.  Currently, the only way these are readible are using a BLE utility like LightBlue.
-// To be displayed correctly, the format option in LightBlue must be set to something other than "None" and "Signed Integer".  Four values are then displayed in sequence:
-// Roll, Pitch, Yaw, SN.
+// Nano BLE 33 Sense Gyro Data Send to BLE intended for iOS (iPhone or iPad) but probably works for other compatible BLE devices.
+// This sketch sends the Pitch, Yaw, and Row values from the on-board gyroscope to BLE along with a sequence number.  Currently, the
+// only way these are readible are using a BLE utility like LightBlue. To be displayed correctly in LightBlue, the format options
+// must be set to something other than "None" and to "Signed Integer".  Four values are then displayed in sequence: Roll, Pitch, Yaw,
+// and SN.
 //
 // Copyright (c) Sam Goldwasser and Jan Beck, 1994-2024
 //

@@ -5,5 +5,6 @@ there for years, a Web search has real trouble finding them, especially with AI.
 
 * Nano BLE 33 Sense Sensor Test: Exercise most of the sensors with data and visual displays.
 * Nano_BLE_33_Sense_RGB_LED_Color_via_Bluetooth1: Display colors in RGB_LEDs via Bluetooth.
+* Nano_BLE_Send_Gyro_Data_to_iPhone_Test4: Send Gyro data via Bluetooth and display in RGB_LEDs.
 
 Samuel M. Goldwasser.  Copyright (if any) and additional details in the sketch headers.

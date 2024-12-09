@@ -1,8 +1,13 @@
 // Nano BLE 33 Sense Gyro Data Send to BLE intended for iOS (iPhone or iPad) but probably works for other compatible BLE devices.
-// This sketch sends the Pitch, Yaw, and Row values from the on-board gyroscope to BLE along with a sequence number.  The Gyro values
+// This sketch sends the Roll, Pitch, and Yaw, values from the on-board gyroscope via BLE along with a sequence number.  The Gyro values
 // are the integer part of the floating point Gyro data; the SN is itself. ;-)  Currently, the only way these are readible are by using
-// a BLE utility like LightBlue. To be displayed correctly in LightBlue, the format options must be set to something other than "None"
+// a BLE utility like LightBlue.  To be displayed correctly in LightBlue, the format options must be set to something other than "None"
 // and to "Signed Integer".  Four values are then displayed in sequence: Roll, Pitch, Yaw, and SN.
+//
+// When not connected, the BUITLIN LED is off and the PWR LED is on, and it cycles through a scale of colors in the RGB LEDs at a rate
+// of around once a second just for something to do. ;-)  When it connects, the BUILTIN LED is turned on, the PWR LED is turned off, and
+// the RGB LEDs go dark unless there is Gyro activity.  Then their brightness is proportional to the absolute amplitude of Roll, Pitch,
+// and Yaw, respectively.
 //
 // Copyright (c) Sam Goldwasser and Jan Beck, 1994-2024
 //

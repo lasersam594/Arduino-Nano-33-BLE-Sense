@@ -52,7 +52,7 @@ Suggestions for (modest!) improvements welcome.
 #define GRAY 7,7,7
 #define MAGENTA 15,0,30
 #define BLUE 0,0,75
-#define CYAN 0,63,63
+#define CYAN 0,50,50
 #define GREEN 0,192,0
 #define YELLOW 128,92,0
 #define ORANGE 200,40,0
@@ -78,6 +78,7 @@ Suggestions for (modest!) improvements welcome.
 int proximity = 0;
 int count = 0;
 int i = 0;
+int timeout = 0;
 int sum = 0;
 
 // buffer to read audio samples into, each sample is 16-bits
@@ -188,7 +189,7 @@ void loop() {
 
   led = (az * 255);
   if (led < 180) digitalWrite(LED_PWR, HIGH); // Turn on LED_PWR if tilt is more than ~45 degrees
-    else digitalWrite(LED_PWR, LOW);         // analogWrite(LED_PWR, led); // Using analogWrite hangs here, even with a cosntant???
+    else digitalWrite(LED_PWR, LOW);          // analogWrite(LED_PWR, led); // Using analogWrite hangs here, even with a cosntant???
     
 // Gyroscope
 
@@ -210,7 +211,12 @@ void loop() {
   ledr = abs(gr - GR_COR)/2;
   ledp = abs(gp - GP_COR)/2;
   ledy = abs(gy - GY_COR)/2;
-  if ((ledr > 8) || (ledp > 8) || (ledy > 8)) RGB_LED_Color(ledr, ledp, ledy);
+
+  if ((ledr > 8) || (ledp > 8) || (ledy > 8)) {
+    RGB_LED_Color(ledr, ledp, ledy);
+    timeout = 16;
+    }
+  else if (timeout > 0) timeout --;
 
 // Magnetic field
 
@@ -307,6 +313,7 @@ void loop() {
       else if (sum >= 25)  RGB_LED_Color(GRAY);
       else if (sum >= 0)   RGB_LED_Color(BLACK); 
     }
+    if (sum >= 25) timeout = 16;
   }
 
   if (data1 == 1) {
@@ -332,10 +339,12 @@ void loop() {
   // Heartbeat
   count++;
   if (count >= 8) {
-    if((proximity > 230) && (ledr == 0) && (ledp == 0) &&  (ledy == 0) && (sum < 25)) analogWrite(LED_BUILTIN,255); // Pulse led
-    count = 0;
+    if((proximity > 230) && (ledr <= 8) && (ledp <= 8) && (ledy <= 8) && (sum < 25) && (timeout == 0))
+    {
+      analogWrite(LED_BUILTIN,255); // Pulse BUILTIN led
+      count = 0;
+    }
   }
-
   delay(25); 
 }
 
@@ -343,7 +352,7 @@ void RGB_LED_Color(int r, int g, int b) {
   analogWrite(LEDR,255-r);
   analogWrite(LEDG,255-g);
   analogWrite(LEDB,255-b);
-  }
+}
 
 void onPDMdata() {
   // query the number of bytes available
@@ -354,4 +363,4 @@ void onPDMdata() {
 
   // 16-bit, 2 bytes per sample
   samplesRead = bytesAvailable / 2;
-  }
+}

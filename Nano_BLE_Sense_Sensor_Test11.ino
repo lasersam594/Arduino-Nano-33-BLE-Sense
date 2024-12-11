@@ -30,8 +30,8 @@ Suggestions for (modest!) improvements welcome.
 #define Rev2        // Select based on specific board  
 
 // Data transmission
-#define data1 1        // Sends data if 1, LEDs-only on Nano if 0
-#define verbose1 1     // Display labels if 1, data-only if 0
+#define data1 0        // Sends data if 1, LEDs-only on Nano if 0
+#define verbose1 0     // Display labels if 1, data-only if 0
 #define senddiag1 0    // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 
 // Board-specific corrections for possible Gyro offsets
@@ -58,6 +58,8 @@ Suggestions for (modest!) improvements welcome.
 #define ORANGE 200,40,0
 #define RED 255,0,0
 #define WHITE 255,255,255
+
+#include <Arduino.h>
 
 // Version
 #ifdef Rev1
@@ -106,18 +108,23 @@ void setup() {
   if (data1 == 1) {
     Serial.begin(9600);
     while (!Serial);
-    Serial.println("Started.");
+    Serial.println();
+    Serial.println();
+    Serial.println("Arduino Nano 33 BLE Sense Sensor Exerciser.");
   }
 
   // configure the data receive callback
   PDM.onReceive(onPDMdata);
+
+// Startup
 
   if (!IMU.begin()) {
     if (data1 == 1) Serial.println("Failed to initialize IMU!");
     while (1);
   }  
 
-// Version-specific libraries
+// Version-specific temperature and humidity sensor libraries
+
 #ifdef Rev1
   if (!HTS.begin()) {
 #endif
@@ -126,10 +133,9 @@ void setup() {
   if (!HS300x.begin()) {
 #endif
 
-// Startup
-    if (data1 == 1) Serial.println("Failed to initialize humidity temperature sensor!");
+  if (data1 == 1) Serial.println("Failed to initialize temperature and humidity sensor!");
     while (1);  
-    }
+  }
 
   if (!BARO.begin()) {
     if (data1 == 1) Serial.println("Failed to initialize pressure sensor!");
@@ -151,16 +157,21 @@ void setup() {
 
 // Banner blurb
   if ((verbose1 == 1) && (data1 == 1)) {
-    Serial.println("Acceleration in Gs.");
-    Serial.println("Angle in degrees/second. LED threshold 25.");  
-    Serial.println("Magnetic field in Gauss.");
-    Serial.println("Temperature in degrees Centigrade.");
-    Serial.println("Pressure in mm/Hg.");
-    Serial.println("Humidity in rel %.");
-    Serial.println("Proximity in arbitrary units.");
-    Serial.println("RGB light intensity in arbitrary units");
-    Serial.println("Peak soundlevel in arbitrary units");
     Serial.println();
+    Serial.println("Functions:");
+    Serial.println();
+    Serial.println("  - Acceleration in Gs.");
+    Serial.println("  - Angle in degrees/second. LED threshold 25.");  
+    Serial.println("  - Magnetic field in Gauss.");
+    Serial.println("  - Temperature in degrees Centigrade.");
+    Serial.println("  - Pressure in mm/Hg.");
+    Serial.println("  - Humidity in rel %.");
+    Serial.println("  - Proximity in arbitrary units.");
+    Serial.println("  - RGB light intensity in arbitrary units.");
+    Serial.println("  - Peak soundlevel in arbitrary units."); 
+    Serial.println();
+    Serial.println("Data:"); 
+    Serial.println("");
   }
 }
 
@@ -175,7 +186,7 @@ void loop() {
   while (!IMU.accelerationAvailable()) {}
   IMU.readAcceleration(ax, ay, az);
   if (data1 == 1) {
-    if (verbose1 == 1) Serial.print("Axl (Gs) X: ");
+    if (verbose1 == 1) Serial.print("  Axl (Gs) X: ");
     sprintf(buffer, "%5.2f", ax );
     Serial.print(buffer);
     if (verbose1 == 1) Serial.print(" Y: ");

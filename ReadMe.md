@@ -8,4 +8,4 @@ there for years, a Web search has real trouble finding them, especially with AI.
 * Nano_33_BLE_Sense_Send_Gyro_Data_to_iPhone_Test4: Send Gyro data via Bluetooth to iPhone and also
   display magnitude in RGB_LEDs.
 
-Samuel M. Goldwasser.  Copyright (if any) and additional details in the sketch headers.
+Samuel M. Goldwasser.  Copyright® (if any) and additional details in the sketch headers.

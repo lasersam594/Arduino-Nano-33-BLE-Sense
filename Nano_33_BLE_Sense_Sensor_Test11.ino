@@ -1,7 +1,7 @@
 /*
 Nano BLE 33 Sense Sensor Test V11.
 
-Copyright (c) 1994-2024 Sam Goldwasser, all rights reserved.  Permission is granted for public use or modification as long
+Copyright® 1994-2024 Sam Goldwasser, all rights reserved.  Permission is granted for public use or modification as long
 as the Copyright notice is included.
 
 This a simple utility to exercise most of the Nano BLE 33 Sense Ver1 or Ver2 sensors using the on-board LEDs and serial port.

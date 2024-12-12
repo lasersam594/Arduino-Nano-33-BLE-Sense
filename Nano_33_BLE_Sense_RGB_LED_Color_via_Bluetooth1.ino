@@ -10,7 +10,7 @@ Write" under Device Information.  To set a specific color, touch "Write new valu
 number from 1 to B.  Back up to the Peripheral selection screen to disconnect.  Yes, this gets
 rather boring rather quickly, but it should be painless. ;-)
 
-Modified from original by Samuel M. Goldwasser, no copyright by me, do with it as you see fit. ;-)
+Modified from original by Samuel M. Goldwasser, no copyright® by me, do with it as you see fit. ;-)
 */
 
 #include <ArduinoBLE.h>

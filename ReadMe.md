@@ -1,4 +1,4 @@
-These are basic sketches for the Nano BLE 33 Sense Ver1 and Ver2.
+These are basic sketches for the Nano 33 BLE Sense Ver1 and Ver2.
 
 I put these here because while it's almost certain that sketches like these have been out
 there for years, a Web search has real trouble finding them, especially with AI. ;-)

@@ -9,7 +9,7 @@
 // the RGB LEDs go dark unless there is Gyro activity.  Then their brightness is proportional to the absolute amplitude of Roll, Pitch,
 // and Yaw, respectively.
 //
-// Copyright (c) Sam Goldwasser and Jan Beck, 1994-2024
+// Copyright® Sam Goldwasser and Jan Beck, 1994-2024
 //
 
 #define Rev1                     // Set to appropriate board Rev

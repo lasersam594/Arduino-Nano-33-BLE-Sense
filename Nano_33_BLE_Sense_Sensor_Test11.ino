@@ -1,7 +1,7 @@
 /*
 Nano BLE 33 Sense Sensor Test V11.
 
-Copyright® 1994-2024 Sam Goldwasser, all rights reserved.  Permission is granted for public use or modification as long
+Copyright® Samuel M. Goldwasser, 1994-2024, all rights reserved.  Permission is granted for public use or modification as long
 as the Copyright notice is included.
 
 This a simple utility to exercise most of the Nano BLE 33 Sense Ver1 or Ver2 sensors using the on-board LEDs and serial port.
@@ -27,27 +27,29 @@ Suggestions for (modest!) improvements welcome.
 */
 
 // Select Nano BLE 33 Sense Rev1 or Rev2
-#define Rev2        // Select based on specific board  
+#define Rev1        // Select based on specific board  
 
 // Data transmission
 #define data1 0        // Sends data if 1, LEDs-only on Nano if 0
 #define verbose1 0     // Display labels if 1, data-only if 0
 #define senddiag1 0    // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 
-// Board-specific corrections for possible Gyro offsets
+// Board-specific corrections for possible Gyro offsets and loop speed
 #ifdef Rev1
 #define GR_COR   6.5
 #define GP_COR   0
 #define GY_COR   2.5
+#define timeoutvalue  17
 #endif
 
 #ifdef Rev2
 #define GR_COR   0
 #define GP_COR   0
 #define GY_COR   0
+#define timeoutvalue  8
 #endif
 
-// Color palette for audio in RGB_LEDs.
+// Color palette for audio in RGB_LEDs
 #define BLACK 0,0,0
 #define GRAY 7,7,7
 #define MAGENTA 15,0,30
@@ -61,7 +63,7 @@ Suggestions for (modest!) improvements welcome.
 
 #include <Arduino.h>
 
-// Version
+// Nano 33 BLE Sense Version
 #ifdef Rev1
 #include <Arduino_LSM9DS1.h>       // Accelerometer, magnetometer and gyroscope
 #include <Arduino_HTS221.h>        // Temperature and humidity
@@ -324,7 +326,7 @@ void loop() {
       else if (sum >= 25)  RGB_LED_Color(GRAY);
       else if (sum >= 0)   RGB_LED_Color(BLACK); 
     }
-    if (sum >= 25) timeout = 16;
+    if (sum >= 25) timeout = timeoutvalue * 2;
   }
 
   if (data1 == 1) {
@@ -349,7 +351,7 @@ void loop() {
 
   // Heartbeat
   count++;
-  if (count >= 8) {
+  if (count >= timeoutvalue) {
     if((proximity > 230) && (ledr <= 8) && (ledp <= 8) && (ledy <= 8) && (sum < 25) && (timeout == 0))
     {
       analogWrite(LED_BUILTIN,255); // Pulse BUILTIN led

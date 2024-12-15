@@ -30,13 +30,13 @@ Suggestions for (modest!) improvements welcome.
 #define Rev1  // Select based on specific board
 
 // Data transmission
-#define data1 1        // Sends data if 1, LEDs-only on Nano if 0
-#define verbose1 1     // Display labels if 1, data-only if 0
+#define data1 0        // Sends data if 1, LEDs-only on Nano if 0
+#define verbose1 0     // Display labels if 1, data-only if 0
 #define senddiag1 0    // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 #define GyroAutoCal 1  // Perform automatic offset compensation at startup.  Otherwise use #define values.
 
 // Board-specific corrections for possible Gyro offsets and loop speed
-#define CalValues 50  // Number of Gyro samples to average for calibration
+#define CalValues 50   // Number of Gyro samples to average for calibration
 
 float RollOffsetSum = 0;  // Temporary variables for AutoCal sums
 float PitchOffsetSum = 0;
@@ -108,7 +108,6 @@ float GY_COR   0;
 int proximity = 0;
 int count = 0;
 int i = 0;
-int temp = 0;
 int timeout = 0;
 int sum = 0;
 int CalCount = CalValues;
@@ -186,7 +185,7 @@ void setup() {
     }
 
     PDM.setBufferSize(1024);  // 512 is default; 1024 works but 2048 hangs
-    PDM.setGain(30);          // Optionally set gain, defaults to 20
+    PDM.setGain(25);          // Optionally set gain, defaults to 20
 
     // Banner blurb
     if ((verbose1 == 1) && (data1 == 1)) {
@@ -252,12 +251,14 @@ void setup() {
       if (verbose1 == 1) Serial.print(" | ");
     }
 
+// Gyro AutoCal
     if (GyroAutoCal == 1) {
       if (CalCount == CalValues) {
         CalCount--;
-      } else if (CalCount > 1) {
-        temp = ((CalValues - CalCount) * 256) / CalValues;  // Show increasing brightness of RGB LEDs during calibration
-        RGB_LED_Color(temp, temp, temp);
+      } 
+      else if (CalCount > 1) {
+        if ((CalCount & 3) == 2) RGB_LED_Color(GRAY);
+        else RGB_LED_Color(BLACK);
         RollOffsetSum += gr;
         PitchOffsetSum += gp;
         YawOffsetSum += gy;

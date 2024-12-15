@@ -29,47 +29,49 @@ Suggestions for (modest!) improvements welcome.
 // Select Nano BLE 33 Sense Rev1 or Rev2
 #define Rev1  // Select based on specific board
 
-// Data transmission
-#define data1 0        // Sends data if 1, LEDs-only on Nano if 0
-#define verbose1 0     // Display labels if 1, data-only if 0
-#define senddiag1 0    // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
-#define GyroAutoCal 1  // Perform automatic offset compensation at startup.  Otherwise use #define values.
+// User parameters
+#define data1 0           // Sends data if 1, LEDs-only on Nano if 0
+#define verbose1 0        // Display labels if 1, data-only if 0
+#define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
+#define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup.  Otherwise use #define values.
 
-// Board-specific corrections for possible Gyro offsets and loop speed
-#define CalValues 50   // Number of Gyro samples to average for calibration
+// Gyro offset parameters and variables
+#define CalValues 50      // Number of Gyro samples to average for calibration
 
 float RollOffsetSum = 0;  // Temporary variables for AutoCal sums
 float PitchOffsetSum = 0;
 float YawOffsetSum = 0;
 
-float GR_COR = 0;  // Correction values
+float GR_COR = 0;         // Offset correction values
 float GP_COR = 0;
 float GY_COR = 0;
 
-// Fixed calibration values if AutoCal is disabled
+int CalCount = CalValues;
+float pgr, pgp, pgy;
 
-// #1
+// Fixed calibration values may be needed if Gyro AutoCal is not enabled (probably only for Rev1)
+
 /*
-#ifdef Rev1
-float GR_COR   6.5;
-float GP_COR   0;
-float GY_COR   2.5;
-#define timeoutvalue  17
+#ifdef Rev1 // #1
+GR_COR = 6.5;
+GP_COR = 0;
+GY_COR = 2.5;
 #endif
+*/
 
-// #2
-#ifdef Rev1
-float GR_COR = 4;
-float GP_COR = 1.3;
-float GY_COR = 5.6;
-#define timeoutvalue  17
+/*
+#ifdef Rev1 // #2
+GR_COR = 4;
+GP_COR = 1.3;
+GY_COR = 5.6;
 #endif
+*/
 
-#ifdef Rev2
-float GR_COR   0;
-float GP_COR   0;
-float GY_COR   0;
-#define timeoutvalue  8
+/*
+#ifdef Rev2 // Possibly for all Rev2s
+GR_COR = 0;
+GP_COR = 0;
+GY_COR = 0;
 #endif
 */
 
@@ -87,7 +89,7 @@ float GY_COR   0;
 
 #include <Arduino.h>
 
-// Nano 33 BLE Sense Version
+// Nano 33 BLE Sense Version for libraries and loop speed
 #ifdef Rev1
 #include <Arduino_LSM9DS1.h>  // Accelerometer, magnetometer and gyroscope
 #include <Arduino_HTS221.h>   // Temperature and humidity
@@ -110,8 +112,6 @@ int count = 0;
 int i = 0;
 int timeout = 0;
 int sum = 0;
-int CalCount = CalValues;
-
 
 short sampleBuffer[1024];   // buffer to read audio samples into, each sample is 16-bits
 volatile int samplesRead;   // number of samples read
@@ -237,6 +237,7 @@ void setup() {
     // Gyroscope
 
     while (!IMU.gyroscopeAvailable()) {}
+    pgr = gr; pgp = gp; pgy = gy;
     IMU.readGyroscope(gr, gp, gy);
     if (data1 == 1) {
       if (verbose1 == 1) Serial.print("Gyro (Degs/s) R: ");
@@ -253,17 +254,21 @@ void setup() {
 
 // Gyro AutoCal
     if (GyroAutoCal == 1) {
-      if (CalCount == CalValues) {
-        CalCount--;
-      } 
+      if (CalCount == CalValues) CalCount--; // Skip corrupted first value
       else if (CalCount > 1) {
-        if ((CalCount & 3) == 2) RGB_LED_Color(GRAY);
+        if (((abs(gr - pgr) > 2)) || ((abs(gp - pgp) > 2)) || ((abs(gr - pgr) > 2))) { // Start over if too much gyro activity
+          CalCount = CalValues;
+          RollOffsetSum = 0;
+          PitchOffsetSum = 0;
+          YawOffsetSum = 0;
+        } 
+        if ((CalCount & 3) == 2) RGB_LED_Color(GRAY); // Heartbeat while AutoCal in progress
         else RGB_LED_Color(BLACK);
         RollOffsetSum += gr;
         PitchOffsetSum += gp;
         YawOffsetSum += gy;
         CalCount--;
-      } else if (CalCount == 1) {
+      } else if (CalCount == 1) { // Compute average offsets
         GR_COR = RollOffsetSum / CalValues;
         GP_COR = PitchOffsetSum / CalValues;
         GY_COR = YawOffsetSum / CalValues;

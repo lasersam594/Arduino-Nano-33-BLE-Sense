@@ -4,9 +4,9 @@ Nano BLE 33 Sense Sensor Test V11.
 Copyright® Samuel M. Goldwasser, 1994-2024, all rights reserved.  Permission is granted for public use or modification as long
 as the Copyright notice is included.
 
-This a simple utility to exercise most of the Nano BLE 33 Sense Ver1 or Ver2 sensors using the on-board LEDs and serial port.
+This a simple utility to exercise most of the Nano BLE 33 Sense Rev1 or Rev2 sensors using the on-board LEDs and serial port.
 The required Nano BLE 33 libraries are all either built into the Arduino IDE or Arduino Cloud Editor, or readily found via
-a Web search.  Note that the primary difference between the Ver1 and Ver2 sketches are the libraries for the IMU and T/H.
+a Web search.  Note that the primary difference between the Rev1 and Rev2 sketches are the libraries for the IMU and T/H.
 
 Accelerometer (Gs) X, Y, Z; Gyroscope (Degs/s) Roll, Pitch, Yaw; Magnetic Field (Gauss) X, Y, Z; Temperature (DegC),
 Pressure (mm/Hg), Humidity (%), Proximity (Prox), RGB Light Detect (R, G, B) values, and peak Mic values are all optionally
@@ -14,14 +14,16 @@ sent via the serial port as data-only, or with labels.
 
 In addition, the on-board BUILTIN_LED, PWR_LED, and RGB_LED provide visual output:
 
-1. Gyroscope: Displays the absolute value for Roll, Pitch, and Yaw as the brightness of the RGB leds.
+1. Gyroscope: Displays the absolute value for Roll, Pitch, and Yaw as the brightness of the RGB leds.  Optional Gyro
+   calibration to compensate for board-specific roll, pitch, and yaw offsets.  If enabled, Nano must remain stationary at
+   startup while RGB LEDs are blinking.  This may only be needed for Rev1 boards.
 2. Proximity: Displays the distance as the brightness of the BUILTIN_LED (bright is closest).
 3. Static Tilt (accelerometer Z value): Turns on the PWR_LED if more than approximately 45 degrees.
 4. Microphone: Displays the peak intensity of the audio on a color scale using the RGB leds.
 5. Heartbeat: The BUILTIN_LED flashes at an approximately 1 Hz rate if there is no display activity.
 
-To select the Nano BLE 33 Sense board type (Ver1 or Ver2), edit the #define at the beginning of the sketch.
-To select whether data is send to the serial port and what type, edit the #defines data1 and verbose1.
+To select the Nano BLE 33 Sense board type (Rev1 or Rev2), edit the #define at the beginning of the sketch.
+To select whether data is sent to the serial port and what type, edit the #defines data1 and verbose1.
 
 Suggestions for (modest!) improvements welcome.
 */
@@ -30,7 +32,7 @@ Suggestions for (modest!) improvements welcome.
 #define Rev1  // Select based on specific board
 
 // User parameters
-#define data1 0           // Sends data if 1, LEDs-only on Nano if 0
+#define data1 0           // Sends data to serial port if 1, LEDs-only on Nano if 0
 #define verbose1 0        // Display labels if 1, data-only if 0
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 #define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup.  Otherwise use #define values.
@@ -38,11 +40,11 @@ Suggestions for (modest!) improvements welcome.
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration
 
-float RollOffsetSum = 0;  // Temporary variables for AutoCal sums
+float RollOffsetSum = 0;  // Temporary variables for Gyro AutoCal sums
 float PitchOffsetSum = 0;
 float YawOffsetSum = 0;
 
-float GR_COR = 0;         // Offset correction values
+float GR_COR = 0;         // Gyro offset correction values
 float GP_COR = 0;
 float GY_COR = 0;
 
@@ -134,8 +136,7 @@ void setup() {
 
   if (data1 == 1) {
     Serial.begin(9600);
-    while (!Serial)
-      ;
+    while (!Serial){}
     Serial.println();
     Serial.println();
     Serial.println("Arduino Nano 33 BLE Sense Sensor Exerciser.");

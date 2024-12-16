@@ -1,5 +1,5 @@
 /*
-Nano BLE 33 Sense Sensor Test V11.
+Nano BLE 33 Sense Sensor Test V12.
 
 Copyright® Samuel M. Goldwasser, 1994-2024, all rights reserved.  Permission is granted for public use or modification as long
 as the Copyright notice is included.
@@ -40,11 +40,12 @@ This sketch should then compile without errors. ;-)
 #define Rev1  // Select based on specific board
 
 // User parameters
-#define data1 0           // Sends data to serial port if 1, LEDs-only on Nano if 0.
-#define verbose1 0        // Display labels if 1, data-only if 0.
+#define data1 0           // Sends data to serial port if 1, LEDs-only on Nano if 0
+#define verbose1 0        // Display labels if 1, data-only if 0
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 #define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup.  Otherwise use #define COR values.
-
+                          //  If enabled, the board must be stationary while the RGB LEDs are blinking at startup.
+                          
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration
 

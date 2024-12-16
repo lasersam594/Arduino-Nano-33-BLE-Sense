@@ -136,7 +136,7 @@ void setup() {
 
   if (data1 == 1) {
     Serial.begin(9600);
-    while (!Serial){}
+    while (!Serial);
     Serial.println();
     Serial.println();
     Serial.println("Arduino Nano 33 BLE Sense Sensor Exerciser.");
@@ -257,7 +257,7 @@ void setup() {
     if (GyroAutoCal == 1) {
       if (CalCount == CalValues) CalCount--; // Skip corrupted first value
       else if (CalCount > 1) {
-        if (((abs(gr - pgr) > 2)) || ((abs(gp - pgp) > 2)) || ((abs(gr - pgr) > 2))) { // Start over if too much gyro activity
+        if (((fabs(gr - pgr) > 2)) || ((fabs(gp - pgp) > 2)) || ((fabs(gr - pgr) > 2))) { // Start over if too much gyro activity
           CalCount = CalValues;
           RollOffsetSum = 0;
           PitchOffsetSum = 0;
@@ -277,9 +277,9 @@ void setup() {
       }
     }
 
-    ledr = abs(gr - GR_COR) / 2;
-    ledp = abs(gp - GP_COR) / 2;
-    ledy = abs(gy - GY_COR) / 2;
+    ledr = fabs(gr - GR_COR) / 2;
+    ledp = fabs(gp - GP_COR) / 2;
+    ledy = fabs(gy - GY_COR) / 2;
 
     if ((ledr > 8) || (ledp > 8) || (ledy > 8)) {
       RGB_LED_Color(ledr, ledp, ledy);
@@ -367,10 +367,10 @@ void setup() {
       sum = 0;
 
       for (i = 0; i < samplesRead; i++)
-        if (abs(sampleBuffer[i]) > sum) sum = abs(sampleBuffer[i]);  // Peak detect
+        if (fabs(sampleBuffer[i]) > sum) sum = fabs(sampleBuffer[i]);  // Peak detect
 
       // Display the peak sound value in RGB_LED
-      if (((abs(gr - GR_COR) < 1) && (abs(gp - GP_COR) < 1) && (abs(gy - GY_COR)) < 1)) {  // Only if no Gyro activity
+      if (((fabs(gr - GR_COR) < 1) && (fabs(gp - GP_COR) < 1) && (fabs(gy - GY_COR)) < 1)) {  // Only if no Gyro activity
         if (sum >= 1000) RGB_LED_Color(WHITE);
         else if (sum >= 600) RGB_LED_Color(RED);
         else if (sum >= 400) RGB_LED_Color(ORANGE);

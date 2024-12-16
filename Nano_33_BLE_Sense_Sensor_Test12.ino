@@ -22,20 +22,28 @@ In addition, the on-board BUILTIN_LED, PWR_LED, and RGB_LED provide visual outpu
 4. Microphone: Displays the peak intensity of the audio on a color scale using the RGB leds.
 5. Heartbeat: The BUILTIN_LED flashes at an approximately 1 Hz rate if there is no display activity.
 
-To select the Nano BLE 33 Sense board type (Rev1 or Rev2), edit the #define at the beginning of the sketch.
-To select whether data is sent to the serial port and what type, edit the #defines data1 and verbose1.
-
 Suggestions for (modest!) improvements welcome.
+
+If first time using a Nano 33 BLE Sense, install the necessary board and libraries in the Arduino IDE:
+
+1. Go to Tools > Board > Boards Manager or click the Boards icon, type the keyword "ble" in the search box, select
+   "Aduino Mbed OS Nano Boards" and install it.
+2. Download the relevant sensor libraries from their GitHub repositories.  A Web search will find them by name.
+   Go to Sketch > Include Library > Add Zip Library, and point to the file downloaded above.
+3. Go to Tools > Board, and select Arduino MBed OS Nano Boards > Arduino Nano 33 BLE.
+4. Also select the board version, data formatting and Gyro AutoCal options in the #defines, below.
+
+This sketch should then compile without errors. ;-)
 */
 
 // Select Nano BLE 33 Sense Rev1 or Rev2
 #define Rev1  // Select based on specific board
 
 // User parameters
-#define data1 0           // Sends data to serial port if 1, LEDs-only on Nano if 0
-#define verbose1 0        // Display labels if 1, data-only if 0
+#define data1 0           // Sends data to serial port if 1, LEDs-only on Nano if 0.
+#define verbose1 0        // Display labels if 1, data-only if 0.
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
-#define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup.  Otherwise use #define values.
+#define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup.  Otherwise use #define COR values.
 
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration

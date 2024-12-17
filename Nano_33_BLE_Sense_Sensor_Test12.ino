@@ -1,8 +1,8 @@
 /*
 Nano BLE 33 Sense Sensor Test V12.
 
-Copyright® Samuel M. Goldwasser, 1994-2024, all rights reserved.  Permission is granted for public use or modification as long
-as the Copyright notice is included.
+Copyright® Samuel M. Goldwasser, 1994-2024, all rights reserved.  Permission is granted for public use or modification as
+long as the Copyright notice is included.
 
 This a simple utility to exercise most of the Nano BLE 33 Sense Rev1 or Rev2 sensors using the on-board LEDs and serial port.
 The required Nano BLE 33 libraries are all either built into the Arduino IDE or Arduino Cloud Editor, or readily found via
@@ -14,27 +14,27 @@ sent via the serial port as data-only, or with labels.
 
 In addition, the on-board BUILTIN_LED, PWR_LED, and RGB_LED provide visual output:
 
-1. Gyroscope: Displays the absolute value for Roll, Pitch, and Yaw as the brightness of the RGB leds.  Optional Gyro
+1. Gyroscope: Displays the absolute value for Roll, Pitch, and Yaw as the brightness of each if the RGB leds.  Optional Gyro
    calibration to compensate for board-specific roll, pitch, and yaw offsets.  If enabled, Nano must remain stationary at
-   startup while RGB LEDs are blinking.  This may only be needed for Rev1 boards.
+   startup while the RGB LEDs are blinking.  The default duration is ~12 blinks.  This may only be needed for Rev1 boards.
 2. Proximity: Displays the distance as the brightness of the BUILTIN_LED (bright is closest).
 3. Static Tilt (accelerometer Z value): Turns on the PWR_LED if more than approximately 45 degrees.
-4. Microphone: Displays the peak intensity of the audio on a color scale using the RGB leds.
+4. Microphone: Displays the peak intensity of the audio on a color scale using the RGB leds only when Gyro is not active.
 5. Heartbeat: The BUILTIN_LED flashes at an approximately 1 Hz rate if there is no display activity.
 
 Suggestions for (modest!) improvements welcome.
 
-If first time using a Nano 33 BLE Sense, install the necessary board and libraries in the Arduino IDE:
+If this is the first time using a Nano 33 BLE Sense, install the necessary board and libraries in the Arduino IDE:
 
-1. Go to Tools > Board > Boards Manager or click the Boards icon, type the keyword "ble" in the search box, select
-   "Aduino Mbed OS Nano Boards" and install it.
-2. Download the relevant sensor libraries from their GitHub repositories.  For this sketch they will either be
-   LSM9DS1.h and HTS221.h (Rev1) or LPS22HB.h and APDS9960A.h (Rev2).  A Web search will find them by name.
-   Go to Sketch > Include Library > Add Zip Library, and point to the files downloaded above.
+1. Go to Tools > Board > Boards Manager or click the Boards icon, type the keyword "ble" in the search box, install "Arduino
+   Mbed OS Nano Boards".
+2. Download the relevant sensor libraries from their GitHub repositories.  For this sketch they will either be LSM9DS1.h
+   and HTS221.h (Rev1) or LPS22HB.h and APDS9960A.h (Rev2).  A Web search will find them by name.  Go to Sketch > Include
+   Library > Add Zip Library, and point to the files downloaded above.
 3. Go to Tools > Board, and select Arduino MBed OS Nano Boards > Arduino Nano 33 BLE.
 4. Also select the board version, data formatting and Gyro AutoCal options in the #defines, below.
 
-This sketch should then compile without errors. ;-)
+This sketch should then compile without errors (though there may be warnings that can be ignored). ;-)
 */
 
 // Select Nano BLE 33 Sense Rev1 or Rev2
@@ -91,7 +91,7 @@ GY_COR = 0;
 // Color palette for audio in RGB_LEDs
 #define BLACK 0, 0, 0
 #define GRAY 7, 7, 7
-#define MAGENTA 15, 0, 30
+#define MAGENTA 25, 0, 25
 #define BLUE 0, 0, 75
 #define CYAN 0, 50, 50
 #define GREEN 0, 192, 0
@@ -160,8 +160,7 @@ void setup() {
 
   if (!IMU.begin()) {
     if (data1 == 1) Serial.println("Failed to initialize IMU!");
-    while (1)
-      ;
+    while (1);
   }
 
   // Version-specific temperature and humidity sensor libraries
@@ -171,18 +170,16 @@ void setup() {
 #endif
 
 #ifdef Rev2
-    if (!HS300x.begin()) {
+  if (!HS300x.begin()) {
 #endif
 
       if (data1 == 1) Serial.println("Failed to initialize temperature and humidity sensor!");
-      while (1)
-        ;
+      while (1);
     }
 
     if (!BARO.begin()) {
       if (data1 == 1) Serial.println("Failed to initialize pressure sensor!");
-      while (1)
-        ;
+      while (1);
     }
 
     if (!APDS.begin()) {
@@ -192,8 +189,7 @@ void setup() {
     // Microphone (one channel, mono mode. The only sample rates that work so far are 16.000 kHz and 41.667 kHz.  Go figure. ;-)
     if (!PDM.begin(1, 41667)) {
       Serial.println("Failed to start PDM!");
-      while (1)
-        ;
+      while (1);
     }
 
     PDM.setBufferSize(1024);  // 512 is default; 1024 works but 2048 hangs
@@ -285,9 +281,10 @@ void setup() {
         GP_COR = PitchOffsetSum / CalValues;
         GY_COR = YawOffsetSum / CalValues;
         CalCount = 0;
+        RGB_LED_Color(BLACK);
       }
     }
-
+    
     ledr = fabs(gr - GR_COR) / 2;
     ledp = fabs(gp - GP_COR) / 2;
     ledy = fabs(gy - GY_COR) / 2;

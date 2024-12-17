@@ -43,9 +43,10 @@ This sketch should then compile without errors. ;-)
 #define data1 0           // Sends data to serial port if 1, LEDs-only on Nano if 0
 #define verbose1 0        // Display labels if 1, data-only if 0
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
-#define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup.  Otherwise use #define COR values.
-                          //  If enabled, the board must be stationary while the RGB LEDs are blinking at startup.
-                          
+#define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup: The board must be stationary
+                          // while the LEDs are blinking.  If not enabled, use #define GR/GP/GY_COR values.
+                          //  If enabled, at start
+
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration
 

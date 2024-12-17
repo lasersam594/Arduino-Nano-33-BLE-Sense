@@ -28,8 +28,9 @@ If first time using a Nano 33 BLE Sense, install the necessary board and librari
 
 1. Go to Tools > Board > Boards Manager or click the Boards icon, type the keyword "ble" in the search box, select
    "Aduino Mbed OS Nano Boards" and install it.
-2. Download the relevant sensor libraries from their GitHub repositories.  A Web search will find them by name.
-   Go to Sketch > Include Library > Add Zip Library, and point to the file downloaded above.
+2. Download the relevant sensor libraries from their GitHub repositories.  For this sketch they will either be
+   LSM9DS1.h and HTS221.h (Rev1) or LPS22HB.h and APDS9960A.h (Rev2).  A Web search will find them by name.
+   Go to Sketch > Include Library > Add Zip Library, and point to the files downloaded above.
 3. Go to Tools > Board, and select Arduino MBed OS Nano Boards > Arduino Nano 33 BLE.
 4. Also select the board version, data formatting and Gyro AutoCal options in the #defines, below.
 

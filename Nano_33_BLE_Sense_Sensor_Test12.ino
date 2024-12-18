@@ -46,7 +46,6 @@ This sketch should then compile without errors (though there may be warnings tha
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 #define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup: The board must be stationary
                           // while the LEDs are blinking.  If not enabled, use #define GR/GP/GY_COR values.
-                          //  If enabled, at start
 
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration
@@ -66,7 +65,7 @@ float pgr, pgp, pgy;
 // Fixed calibration values may be needed if Gyro AutoCal is not enabled (probably only for Rev1)
 
 /*
-#ifdef Rev1 // #1
+#ifdef Rev1 // Sample #1
 GR_COR = 6.5;
 GP_COR = 0;
 GY_COR = 2.5;
@@ -74,7 +73,7 @@ GY_COR = 2.5;
 */
 
 /*
-#ifdef Rev1 // #2
+#ifdef Rev1 // Sample #2
 GR_COR = 4;
 GP_COR = 1.3;
 GY_COR = 5.6;

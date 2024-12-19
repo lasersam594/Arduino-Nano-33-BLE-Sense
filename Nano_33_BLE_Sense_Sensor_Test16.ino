@@ -45,12 +45,11 @@ is commented out (which seems to have no effect) and T,P,H are only sampled ever
 #define Rev2              // Select based on specific board
 
 // User parameters
-#define data1 1           // Sends data to serial port if 1, LEDs-only on Nano if 0
-#define verbose1 1        // Display labels if 1, data-only if 0
+#define data1 0           // Sends data to serial port if 1, LEDs-only on Nano if 0
+#define verbose1 0        // Display labels if 1, data-only if 0
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 #define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup: The board must be stationary
-                          // while the LEDs are blinking.  If not enabled, use #define GR/GP/GY_COR values.
-                          //  If enabled, at start
+                          //  while the LEDs are blinking.  If not enabled, use #define GR/GP/GY_COR values.
 
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration
@@ -67,7 +66,7 @@ int CalCount = CalValues;
 int GyroAutoCalFlag = 0;
 float pgr, pgp, pgy;
 
-// Fixed calibration values may be needed if Gyro AutoCal is not enabled (probably only for Rev1)
+// Fixed calibration values may be needed if Gyro AutoCal is not enabled (more likely for Rev1)
 
 /*
 #ifdef Rev1 // Sample #1
@@ -109,8 +108,8 @@ GY_COR = 0;
 
 // Nano 33 BLE Sense Version for libraries and loop speed
 #ifdef Rev1
-#include <Arduino_LSM9DS1.h>  // Accelerometer, magnetometer and gyroscope
-#include <Arduino_HTS221.h>   // Temperature and humidity
+#include <Arduino_LSM9DS1.h>        // Accelerometer, magnetometer and gyroscope
+#include <Arduino_HTS221.h>         // Temperature and humidity
 #define timeoutvalue  17
 #define skipcount 25
 #endif
@@ -123,9 +122,9 @@ GY_COR = 0;
 #endif
 
 // Common libraries
-#include <Arduino_LPS22HB.h>   // Pressure
-#include <Arduino_APDS9960.h>  // RGB light and proximity
-#include <PDM.h>
+#include <Arduino_LPS22HB.h>        // Pressure
+#include <Arduino_APDS9960.h>       // RGB light and proximity
+#include <PDM.h>                    // Microphone
 
 #include <SPI.h>
 

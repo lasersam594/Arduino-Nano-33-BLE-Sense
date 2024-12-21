@@ -62,14 +62,6 @@ int CalCount = CalValues;
 int GyroAutoCalFlag = 0;
 float pgr, pgp, pgy;
 
-// Fixed calibration values may be needed if Gyro AutoCal is not enabled (probably only for Rev1)
-
-/*
-GR_COR = 6.5;
-GP_COR = 0;
-GY_COR = 2.5;
-*/
-
 // Color palette for audio in RGB_LEDs
 #define BLACK 0, 0, 0
 #define GRAY 7, 7, 7
@@ -105,6 +97,13 @@ int i = 0;
 int timeout = 0;
 
 void setup() {
+
+// Fixed calibration values may be needed if Gyro AutoCal is not enabled (probably only for Rev1)
+/*
+GR_COR = 6.5;
+GP_COR = 0;
+GY_COR = 2.5;
+*/
 
   // Set the LEDs pins as outputs
   pinMode(LED_BUILTIN, OUTPUT);

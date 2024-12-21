@@ -66,32 +66,6 @@ int CalCount = CalValues;
 int GyroAutoCalFlag = 0;
 float pgr, pgp, pgy;
 
-// Fixed calibration values may be needed if Gyro AutoCal is not enabled (more likely for Rev1)
-
-/*
-#ifdef Rev1 // Sample #1
-GR_COR = 6.5;
-GP_COR = 0;
-GY_COR = 2.5;
-#endif
-*/
-
-/*
-#ifdef Rev1 // Sample #2
-GR_COR = 4;
-GP_COR = 1.3;
-GY_COR = 5.6;
-#endif
-*/
-
-/*
-#ifdef Rev2 // All Rev2s tested were < 1
-GR_COR = 0;
-GP_COR = 0;
-GY_COR = 0;
-#endif
-*/
-
 // Color palette for audio in RGB_LEDs
 #define BLACK 0, 0, 0
 #define GRAY 7, 7, 7
@@ -141,7 +115,36 @@ int sum = 0;
 short sampleBuffer[1024];   // buffer to read audio samples into, each sample is 16-bits
 volatile int samplesRead;   // number of samples read
 
+#define LED_USER 17
+
 void setup() {
+
+  // Fixed calibration values may be needed if Gyro AutoCal is not enabled (more likely for Rev1)
+
+  /*
+  // Sample #1
+  #ifdef Rev1
+    GR_COR = 6.5;
+    GP_COR = 0;
+    GY_COR = 2.5;
+  #endif
+  */
+  /*
+  // Sample #2
+  #ifdef Rev1
+    GR_COR = 4;
+    GP_COR = 1.3;
+    GY_COR = 5.6;
+  #endif
+  */
+  /*
+  // All Rev2s tested were < 1
+  #ifdef Rev2
+    GR_COR = 0;
+    GP_COR = 0;
+    GY_COR = 0;
+  #endif
+  */
 
   // Set SPI clock speed
   SPISettings(64000000, MSBFIRST, SPI_MODE0); // It is not clear if this does anything

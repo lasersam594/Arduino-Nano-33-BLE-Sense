@@ -9,8 +9,8 @@ there for years, a Web search has real trouble finding them, especially with AI.
   This version runs much slower on the Rev2 board.
 * Nano_33_BLE_Sense_Sensor_Test16: Exercise most of the sensors with data and visual displays.
 * Nano_33_BLE_Sense_RGB_LED_Color_via_Bluetooth1: Display colors in RGB_LEDs via Bluetooth.
-* Nano_33_BLE_Sense_Send_Gyro_Data_to_iPhone_Test4: Send Gyro data via Bluetooth to iPhone and also
-  display magnitude in RGB_LEDs.
+* Nano_33_BLE_Sense_Bluetooth_Test1: Send Gyro data via Bluetooth and also display magnitude in
+  RGB_LEDs.
 * Nano_33_BLE_Sense_Rev1-2_IMU-TPH_Speed_Test3: Effort to diagnose apparent higher performance of
   Rev1 compared to Rev2 especially for Magnetometer.  The loop reading the magnetic field in X,Y,Z
   runs ~twice as fast for Rev1 compared to Rev2.  In addition, IMU intialization is virtually

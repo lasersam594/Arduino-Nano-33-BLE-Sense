@@ -136,7 +136,7 @@ void loop() {
     // while central is connected, Update every 100 ms
     while (central.connected()) {
       long currentMillis = millis();
-      // if 200 ms have passed, check:
+      // if 100 ms have passed, check:
       if (currentMillis - previousMillis >= 100) {
         previousMillis = currentMillis;
         updateValues();

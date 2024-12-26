@@ -95,7 +95,7 @@ void setup() {
   pinMode(LEDB, OUTPUT);
 
   // Turn the LED_BUILTIN and LED_PWR on and set the RGB LEDs at low brightness
-  digitalWrite(LED_BUILTIN, 1);
+  digitalWrite(LED_BUILTIN, 0);
   digitalWrite(LED_PWR, 1);
   analogWrite(LEDR, 200);
   analogWrite(LEDG, 200);

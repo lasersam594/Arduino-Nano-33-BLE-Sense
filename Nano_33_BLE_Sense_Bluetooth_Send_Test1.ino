@@ -16,8 +16,8 @@
 
 #define Rev2               // Set to appropriate board Rev
 
-#define data1 1            // Send data
-#define verbose1 1         // Include labels
+#define data1 0            // Send data
+#define verbose1 0         // Include labels
 #define GyroAutoCal 1      // Perform automatic Gyro offset compensation at startup: Board must be stationary when RGB LED is blinking.
 
 // Gyro offset parameters and variables
@@ -87,12 +87,19 @@ void setup() {
       while (!Serial);
     }
 
- // Set the LEDs pins as outputs
+  // Set the LEDs pins as outputs
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_PWR, OUTPUT);
   pinMode(LEDR, OUTPUT);
   pinMode(LEDG, OUTPUT);
   pinMode(LEDB, OUTPUT);
+
+  // Turn the LED_BUILTIN and LED_PWR on and set the RGB LEDs at low brightness
+  digitalWrite(LED_BUILTIN, 1);
+  digitalWrite(LED_PWR, 1);
+  analogWrite(LEDR, 200);
+  analogWrite(LEDG, 200);
+  analogWrite(LEDB, 200);
 
   // begin initialization
   if (!BLE.begin()) {
@@ -117,6 +124,42 @@ void setup() {
 
 void loop() {
   
+  // Gyro AutoCal
+  if ((GyroAutoCal == 1) && (CalCount != 0)) {
+    while (!IMU.gyroscopeAvailable());
+    pgr = gr; pgp = gp; pgy = gy;
+    IMU.readGyroscope(gr, gp, gy);
+
+    if (CalCount == CalValues) {
+      CalCount--;          // Skip corrupted first value
+      GyroAutoCalFlag = 1; // Disable RGB_LED output while GyroAutoCal in progress
+    }
+    else if (CalCount > 1) { // Test for too much motion
+      if (((fabs(gr - pgr) > 2)) || ((fabs(gp - pgp) > 2)) || ((fabs(gr - pgr) > 2))) { // Start over if too much gyro activity
+        CalCount = CalValues;
+        RollOffsetSum = 0;
+        PitchOffsetSum = 0;
+        YawOffsetSum = 0;
+      } 
+      else { // Update sums
+        RollOffsetSum += gr;
+        PitchOffsetSum += gp;
+        YawOffsetSum += gy;
+        if ((CalCount & 3) == 2) RGB_LED_Color(GRAY); // Heartbeat while AutoCal in progress
+        else RGB_LED_Color(BLACK);
+        CalCount--;
+      }
+    }
+    else if (CalCount == 1) { // Compute average offsets
+      GR_COR = RollOffsetSum / CalValues;
+      GP_COR = PitchOffsetSum / CalValues;
+      GY_COR = YawOffsetSum / CalValues;
+      CalCount = 0;
+      GyroAutoCalFlag = 0;
+      RGB_LED_Color(BLACK);
+    }
+  }
+
   // wait for a Bluetooth® Low Energy central
   BLEDevice central = BLE.central();
 
@@ -161,42 +204,11 @@ void loop() {
           Serial.println(buffer);
         }
 
-        // Gyro AutoCal
-
-        if (GyroAutoCal == 1) {
-          if (CalCount == CalValues) {
-            CalCount--;          // Skip corrupted first value
-            GyroAutoCalFlag = 1; // Disable RGB_LED output while GyroAutoCal in progress
-        }
-        else if (CalCount > 1) {
-          if (((fabs(gr - pgr) > 2)) || ((fabs(gp - pgp) > 2)) || ((fabs(gr - pgr) > 2))) { // Start over if too much gyro activity
-            CalCount = CalValues;
-            RollOffsetSum = 0;
-            PitchOffsetSum = 0;
-            YawOffsetSum = 0;
-          } 
-          if ((CalCount & 3) == 2) RGB_LED_Color(GRAY); // Heartbeat while AutoCal in progress
-          else RGB_LED_Color(BLACK);
-          RollOffsetSum += gr;
-          PitchOffsetSum += gp;
-          YawOffsetSum += gy;
-          CalCount--;
-        }
-        else if (CalCount == 1) { // Compute average offsets
-          GR_COR = RollOffsetSum / CalValues;
-          GP_COR = PitchOffsetSum / CalValues;
-          GY_COR = YawOffsetSum / CalValues;
-          CalCount = 0;
-          GyroAutoCalFlag = 0;
-          RGB_LED_Color(BLACK);
-        }
-      }
 
       ledr = abs(gr - GR_COR)/2; // Format data for RGB LEDs
       ledp = abs(gp - GP_COR)/2;
       ledy = abs(gy - GY_COR)/2;
       if (GyroAutoCalFlag == 0) RGB_LED_Color(ledr, ledp, ledy); // Only update if Gyro AutoCal is not active
-
       }
     }
   

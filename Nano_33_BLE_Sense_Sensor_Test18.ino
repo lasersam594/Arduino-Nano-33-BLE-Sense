@@ -44,6 +44,9 @@ is commented out (which seems to have no effect) and T,P,H are only sampled ever
 // Select Nano BLE 33 Sense Rev1 or Rev2
 #define Rev2              // Select based on specific board
 
+// Firmware version for banner. ;-)
+#define Version 18        // Sketch version
+
 // User parameters
 #define data1 1           // Sends data to serial port if 1, LEDs-only on Nano if 0
 #define verbose1 1        // Display labels if 1, data-only if 0
@@ -106,6 +109,7 @@ float pgr, pgp, pgy;
 float temperature = 0;
 float pressure = 0;
 float humidity = 0;
+int Ver = Version;
 int proximity = 0;
 int count = 0;
 int i = 0;
@@ -170,8 +174,6 @@ if (GyroAutoCal == 1) GyroAutoCalFlag = 1; // Disables other sensors and all sen
     Serial.begin(9600);
     while (!Serial);
     Serial.println();
-    Serial.println();
-    Serial.println("Arduino Nano 33 BLE Sense Sensor Exerciser.");
   }
 
   // configure the data receive callback
@@ -219,6 +221,18 @@ if (GyroAutoCal == 1) GyroAutoCalFlag = 1; // Disables other sensors and all sen
   // Banner blurb
 
   if ((verbose1 == 1) && (data1 == 1)) {
+    Serial.println();
+    
+    #ifdef Rev1
+      Serial.print("**** Arduino Nano 33 BLE Sense Rev1 Sensor Test Version ");
+    #endif
+
+    #ifdef Rev2
+      Serial.print("**** Arduino Nano 33 BLE Sense Rev2 Sensor Test Version ");
+    #endif
+
+    Serial.print(Ver);
+    Serial.println(" ****");
     Serial.println();
     Serial.println("Functions:");
     Serial.println();

@@ -7,7 +7,7 @@ there for years, a Web search has real trouble finding them, especially with AI.
 
 * Nano_33_BLE_Sense_Sensor_Test12: Exercise most of the sensors with data and visual displays.
   This version runs much slower on the Rev2 board.
-* Nano_33_BLE_Sense_Sensor_Test16: Exercise most of the sensors with data and visual displays.
+* Nano_33_BLE_Sense_Sensor_Test18: Exercise most of the sensors with data and visual displays.
 * Nano_33_BLE_Sense_RGB_LED_Color_via_Bluetooth1: Display colors in RGB_LEDs via Bluetooth.
 * Nano_33_BLE_Sense_Bluetooth_Send_Test1: Send Gyro data via Bluetooth and also display magnitude in
   RGB_LEDs.

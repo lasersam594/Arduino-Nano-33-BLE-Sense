@@ -42,17 +42,17 @@ is commented out (which seems to have no effect) and T,P,H are only sampled ever
 */
 
 // Select Nano BLE 33 Sense Rev1 or Rev2
-#define Rev2              // Select based on specific board
+#define Rev2
 
-// Firmware version for banner. ;-)
-#define Version 18        // Sketch version
+// Sketch version number for banner. ;-)
+#define Version 18
 
 // User parameters
 #define data1 1           // Sends data to serial port if 1, LEDs-only on Nano if 0
 #define verbose1 1        // Display labels if 1, data-only if 0
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 #define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup: The board must be stationary
-                          //  while the LEDs are blinking.  If not enabled, use #define GR/GP/GY_COR values.
+                          //  while the RGB LEDs are blinking.  If not enabled, use #define GR/GP/GY_COR values.
 
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration
@@ -206,7 +206,7 @@ if (GyroAutoCal == 1) GyroAutoCalFlag = 1; // Disables other sensors and all sen
   }
 
   if (!APDS.begin()) {
-    if (data1 == 1) Serial.println("Error initializing APDS9960 sensor!");
+    if (data1 == 1) Serial.println("Failed to initialize APDS9960 sensor!");
   }
 
   // Microphone (one channel, mono mode. The only sample rates that work so far are 16.000 kHz and 41.667 kHz.  Go figure. ;-)

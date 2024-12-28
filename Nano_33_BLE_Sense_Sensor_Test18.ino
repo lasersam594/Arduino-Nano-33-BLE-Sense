@@ -120,8 +120,6 @@ int sum = 0;
 short sampleBuffer[1024];   // buffer to read audio samples into, each sample is 16-bits
 volatile int samplesRead;   // number of samples read
 
-#define LED_USER 17
-
 void setup() {
 
 if (GyroAutoCal == 1) GyroAutoCalFlag = 1; // Disables other sensors and all sensor data to serial port until Gyro Autocal is complete
@@ -246,6 +244,7 @@ if (GyroAutoCal == 1) GyroAutoCalFlag = 1; // Disables other sensors and all sen
     Serial.println("  - RGB light intensity in arbitrary units.");
     Serial.println("  - Peak soundlevel in arbitrary units.");
     Serial.println();
+    delay(2000);
     Serial.println("Data:");
     Serial.println("");
   }
@@ -304,7 +303,7 @@ void loop() {
 
   // Gyro AutoCal
 
-  if (GyroAutoCal == 1) { // RGB_LED output is disabled while GyroAutoCal in progress
+  if (GyroAutoCal == 1) {  // RGB_LED output is disabled while GyroAutoCal in progress
     if (CalCount == CalValues) {
       OtherSensorSkipFlag = 1;
       CalCount--;          // Skip corrupted first value
@@ -449,6 +448,8 @@ void loop() {
         else if (sum >= 0) RGB_LED_Color(BLACK);
       }
       if (sum >= 25) timeout = timeoutvalue * 2;
+    
+      samplesRead = 0;  // Clear sample buffer
     }
 
     if (data1 == 1) {
@@ -457,11 +458,8 @@ void loop() {
       Serial.print(buffer);
       if (senddiag1 == 0) Serial.println("");
     }
-
-    samplesRead = 0;  // Clear sample buffer
-
+  
     // Optional diagnostic field
-
     if (senddiag1 == 1) {
       if (data1 == 1) {
         if (verbose1 == 1) Serial.print(" | Diag: ");

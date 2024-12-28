@@ -5,6 +5,7 @@ These apply to both the Rev1 and Rev2 boards.
 I put these here because while it's almost certain that sketches like these have been out
 there for years, a Web search has real trouble finding them, especially with AI. ;-)
 
+* Nano_33_BLE_Sense_RGB_LED_Cycle_Colors1.  Fancy version of Blink. ;-)
 * Nano_33_BLE_Sense_Sensor_Test12: Exercise most of the sensors with data and visual displays.
   This version runs much slower on the Rev2 board.
 * Nano_33_BLE_Sense_Sensor_Test18: Exercise most of the sensors with data and visual displays.

@@ -8,9 +8,9 @@ as well as LED_PWR (which you may not even realize can be controlled).
 
 If your first time using a Nano 33 BLE Sense, install the necessary board in the Arduino IDE:
 
-1. Go to Tools > Board > Boards Manager or click the Boards icon, type the keyword "nRF" in the search box, install "Seeed
-   Studio XIAO Boards".
-2. Go to Tools > Board, and select Arduino MBed OS Nano Boards > Arduino Nano 33 BLE.
+1. Go to Tools > Board > Boards Manager or click the Boards icon, type the keyword "ble" in the search box, install "Arduino
+   Mbed OS Nano Boards".
+2. Go to Tools > Board, and select: Arduino MBed OS Nano Boards > Arduino Nano 33 BLE.
 3. Go to Tools > Port, and select the correct port.
 
 The sketch should then compile without errors (though there may be warnings that can be ignored).
@@ -51,7 +51,6 @@ void loop() {
   if (state == LOW) digitalWrite(LED_PWR, !(digitalRead(LED_PWR)));
   state =!state;
   RGB_LED_Cycle_Colors();
-  delay(50);
 }
 
 void RGB_LED_Color(int r, int g, int b) {

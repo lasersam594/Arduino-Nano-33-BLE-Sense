@@ -15,7 +15,8 @@ there for years, a Web search has real trouble finding them, especially with AI.
 * Nano_33_BLE_Sense_Rev1-2_IMU-TPH_Speed_Test3: Effort to diagnose apparent higher performance of
   Rev1 compared to Rev2 especially for Magnetometer.  The loop reading the magnetic field in X,Y,Z
   runs ~twice as fast for Rev1 compared to Rev2.  In addition, IMU intialization is virtually
-  instantaneous for Rev1 but takes a second or more for Rev2.
+  instantaneous for Rev1 but takes a second or more for Rev2.  Anyone with thoughts or a solution
+  to this, please contact me.
 
 Written/modified by Samuel M. Goldwasser.  Copyright® (if any) 1994-2025 and additional details in
 the sketch headers.

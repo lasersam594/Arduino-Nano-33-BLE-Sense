@@ -1,7 +1,7 @@
 /*
-Nano BLE 33 Sense Sensor Test V16.
+Nano BLE 33 Sense Sensor Test V18.
 
-Copyright® Samuel M. Goldwasser, 1994-2024, all rights reserved.  Permission is granted for public use or modification as
+Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.  Permission is granted for public use or modification as
 long as the Copyright notice is included.
 
 This a simple utility to exercise most of the Nano BLE 33 Sense Rev1 or Rev2 sensors using the on-board LEDs and serial port.
@@ -46,7 +46,7 @@ is commented out (which seems to have no effect) and T,P,H are only sampled ever
 #define Rev2
 
 // User parameters
-#define data1 1           // Sends data to serial port if 1, LEDs-only on Nano if 0
+#define data1 0           // Sends data to serial port if 1, LEDs-only on Nano if 0
 #define verbose1 1        // Display labels if 1, data-only if 0
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 #define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup: The board must be stationary
@@ -245,9 +245,9 @@ if (GyroAutoCal == 1) GyroAutoCalFlag = 1; // Disables other sensors and all sen
     Serial.println("  - RGB light intensity in arbitrary units.");
     Serial.println("  - Peak soundlevel in arbitrary units.");
     Serial.println();
-    delay(2000);
     Serial.println("Data:");
     Serial.println("");
+    if (GyroAutoCal == 0) delay(2000);
   }
 }
 

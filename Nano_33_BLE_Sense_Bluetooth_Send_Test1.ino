@@ -1,21 +1,20 @@
 /*
-Nano 33 BLE Sense Bluetooth Send Test 1.
+  Nano 33 BLE Sense Bluetooth Send Test 1.
 
-Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.  Permission is granted for public use or modification as
-long as the Copyright notice is included.
+  Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.  Permission is granted for public use or modification as
+  long as the Copyright notice is included.
 
-This sketch sends Gyro data via Bluetooth intended for iOS (iPhone or iPad) but probably works for other BLE devices and is
-confirmed to be at least recognized by Windows.
+  This sketch sends Gyro data via Bluetooth intended for iOS (iPhone or iPad) but probably works for other BLE devices and is
+  confirmed to be at least recognized by Windows.
 
-The Roll, Pitch, and Yaw, values from the on-board gyroscope are sent via BLE along with a sequence number.  The Gyro values
-are the integer part of the floating point Gyro data; the SN is itself. ;-)  Currently, the only way these are readible are by using
-a BLE utility like LightBlue.  To be displayed correctly in LightBlue, the format options must be set to something other than "None"
-and to "Signed Integer".  Four values are then displayed in sequence: Roll, Pitch, Yaw, and SN.
+  The Roll, Pitch, and Yaw, values from the on-board gyroscope are sent via BLE along with a sequence number.  The Gyro values
+  are the integer part of the floating point Gyro data; the SN is itself. ;-)  Currently, the only way these are readible are by using
+  a BLE utility like LightBlue.  To be displayed correctly in LightBlue, the format options must be set to something other than "None"
+  and to "Signed Integer".  Four values are then displayed in sequence: Roll, Pitch, Yaw, and SN.
 
-When not connected, the USER LED is off and it cycles through a scale of colors in the RGB LEDs at a rate
-of around once a second just for something to do. ;-)  When it connects, the USER LED is turned on and
-the RGB LEDs go dark unless there is Gyro activity.  Then their brightness is proportional to the absolute amplitude of Roll, Pitch,
-and Yaw, respectively.
+  When not connected, the BUILTIN LED is off, the PWR LED is on, and the RGB LEDs cycle through a rainbow of colors at a rate of around
+  once a second just for something to do. ;-)  When it connects, the BUILTIN LED goes off, the PWR LED goes on, and the RGB LEDs go dark
+  unless there is Gyro activity.  Then their brightness is proportional to the absolute amplitude of Roll, Pitch, and Yaw, respectively.
 */
 
 #define Rev2               // Set to appropriate board Rev

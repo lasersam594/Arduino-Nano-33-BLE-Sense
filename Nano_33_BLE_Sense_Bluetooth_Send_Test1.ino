@@ -1,18 +1,22 @@
-// Nano BLE 33 Sense Gyro Data Send to BLE intended for iOS (iPhone or iPad) but probably works for other compatible BLE devices and has
-// been confimed to at least be recognized by Windows.
-//
-// This sketch sends the Roll, Pitch, and Yaw, values from the on-board gyroscope via BLE along with a sequence number.  The Gyro values
-// are the integer part of the floating point Gyro data; the SN is itself. ;-)  Currently, the only way these are readible are by using
-// a BLE utility like LightBlue.  To be displayed correctly in LightBlue, the format options must be set to something other than "None"
-// and to "Signed Integer".  Four values are then displayed in sequence: Roll, Pitch, Yaw, and SN.
-//
-// When not connected, the BUITLIN LED is off and the PWR LED is on, and the the RGB LEDs cycle through a series of colors at a rate
-// of around once a second just for something to do. ;-)  When it connects, the BUILTIN LED is turned on, the PWR LED is turned off, and
-// the RGB LEDs go dark unless there is Gyro activity.  Then their brightness is proportional to the absolute amplitude of Roll, Pitch,
-// and Yaw, respectively.
-//
-// Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.
-//
+/*
+Nano 33 BLE Sense Bluetooth Send Test 1.
+
+Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.  Permission is granted for public use or modification as
+long as the Copyright notice is included.
+
+This sketch sends Gyro data via Bluetooth intended for iOS (iPhone or iPad) but probably works for other BLE devices and is
+confirmed to be at least recognized by Windows.
+
+The Roll, Pitch, and Yaw, values from the on-board gyroscope are sent via BLE along with a sequence number.  The Gyro values
+are the integer part of the floating point Gyro data; the SN is itself. ;-)  Currently, the only way these are readible are by using
+a BLE utility like LightBlue.  To be displayed correctly in LightBlue, the format options must be set to something other than "None"
+and to "Signed Integer".  Four values are then displayed in sequence: Roll, Pitch, Yaw, and SN.
+
+When not connected, the USER LED is off and it cycles through a scale of colors in the RGB LEDs at a rate
+of around once a second just for something to do. ;-)  When it connects, the USER LED is turned on and
+the RGB LEDs go dark unless there is Gyro activity.  Then their brightness is proportional to the absolute amplitude of Roll, Pitch,
+and Yaw, respectively.
+*/
 
 #define Rev2               // Set to appropriate board Rev
 
@@ -125,7 +129,8 @@ void setup() {
 void loop() {
   
   // Gyro AutoCal
-  if ((GyroAutoCal == 1) && (CalCount != 0)) {
+  while ((GyroAutoCal == 1) && (CalCount != 0)) {
+    delay(25); // Provide time to see GyroAutoCal in progress. ;-)
     while (!IMU.gyroscopeAvailable());
     pgr = gr; pgp = gp; pgy = gy;
     IMU.readGyroscope(gr, gp, gy);
@@ -135,11 +140,11 @@ void loop() {
       GyroAutoCalFlag = 1; // Disable RGB_LED output while GyroAutoCal in progress
     }
     else if (CalCount > 1) { // Test for too much motion
-      if (((fabs(gr - pgr) > 2)) || ((fabs(gp - pgp) > 2)) || ((fabs(gr - pgr) > 2))) { // Start over if too much gyro activity
-        CalCount = CalValues;
+      if (((fabs(gr - pgr) > 2)) || ((fabs(gp - pgp) > 2)) || ((fabs(gy - pgy) > 2))) { // Start over if too much gyro activity
         RollOffsetSum = 0;
         PitchOffsetSum = 0;
         YawOffsetSum = 0;
+        CalCount = CalValues;
       } 
       else { // Update sums
         RollOffsetSum += gr;
@@ -204,11 +209,10 @@ void loop() {
           Serial.println(buffer);
         }
 
-
       ledr = abs(gr - GR_COR)/2; // Format data for RGB LEDs
       ledp = abs(gp - GP_COR)/2;
       ledy = abs(gy - GY_COR)/2;
-      if (GyroAutoCalFlag == 0) RGB_LED_Color(ledr, ledp, ledy); // Only update if Gyro AutoCal is not active
+      if (GyroAutoCalFlag == 0) RGB_LED_Color(ledr, ledp, ledy); // Only update Gyro activity in RGB LEDs if Gyro AutoCal is not active
       }
     }
   
@@ -222,7 +226,6 @@ void loop() {
       Serial.println("");
     }
   }
-
   // Cycle RGB LED colors while idle - it's got to have something to do. ;-)
   if (GyroAutoCalFlag == 0) RGB_LED_Cycle_Colors(); // But only if Gyro Autocal is not in progress.
 }

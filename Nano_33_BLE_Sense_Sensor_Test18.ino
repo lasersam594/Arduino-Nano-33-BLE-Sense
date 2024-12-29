@@ -32,7 +32,8 @@ If this is the first time using a Nano 33 BLE Sense, install the necessary board
    and HTS221.h (Rev1) or LPS22HB.h and APDS9960A.h (Rev2).  A Web search will find them by name.  Go to Sketch > Include
    Library > Add Zip Library, and point to the files downloaded above.
 3. Go to Tools > Board, and select Arduino MBed OS Nano Boards > Arduino Nano 33 BLE.
-4. Also select the board version, data formatting and Gyro AutoCal options in the #defines, below.
+4. Go to Tools > Port, and select the correct port.
+5. Also select the board Rev, data formatting and Gyro AutoCal options in the #defines, below.
 
 This sketch should then compile without errors (though there may be warnings that can be ignored). ;-)
 
@@ -44,15 +45,15 @@ is commented out (which seems to have no effect) and T,P,H are only sampled ever
 // Select Nano BLE 33 Sense Rev1 or Rev2
 #define Rev2
 
-// Sketch version number for banner. ;-)
-#define Version 18
-
 // User parameters
 #define data1 1           // Sends data to serial port if 1, LEDs-only on Nano if 0
 #define verbose1 1        // Display labels if 1, data-only if 0
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 #define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup: The board must be stationary
                           //  while the RGB LEDs are blinking.  If not enabled, use #define GR/GP/GY_COR values.
+
+// Sketch version number for banner. ;-)
+#define Version 18
 
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration
@@ -117,8 +118,8 @@ int timeout = 0;
 int loopcount = skipcount;
 int sum = 0;
 
-short sampleBuffer[1024];   // buffer to read audio samples into, each sample is 16-bits
-volatile int samplesRead;   // number of samples read
+short sampleBuffer[1024];       // buffer to read audio samples into, each sample is 16-bits
+volatile int samplesRead = 0;   // number of samples read
 
 void setup() {
 
@@ -448,8 +449,6 @@ void loop() {
         else if (sum >= 0) RGB_LED_Color(BLACK);
       }
       if (sum >= 25) timeout = timeoutvalue * 2;
-    
-      samplesRead = 0;  // Clear sample buffer
     }
 
     if (data1 == 1) {
@@ -479,6 +478,7 @@ void loop() {
       count = 0;
     }
   }
+  samplesRead = 0;  // Clear microphone sample buffer
   delay(timeoutvalue);
   // digitalWrite(LED_PWR, !(digitalRead(LED_PWR))); // Diagnostic loop rate indicator
 }

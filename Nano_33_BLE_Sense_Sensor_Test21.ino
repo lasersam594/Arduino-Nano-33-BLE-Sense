@@ -1,5 +1,5 @@
 /*
-  Nano BLE 33 Sense Sensor Test V18.
+  Nano BLE 33 Sense Sensor Test V21.
 
   Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.  Permission is granted for public use or modification as
   long as the Copyright notice is included.
@@ -54,7 +54,7 @@
                           //  while the RGB LEDs are blinking.  If not enabled, use #define GR/GP/GY_COR values.
 
 // Sketch version number for banner. ;-)
-#define Version 18
+#define Version 21
 
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration
@@ -293,10 +293,10 @@ void loop() {
     if (verbose1 == 1) Serial.print("Gyro (Degs/s) R: ");
     sprintf(buffer, "%8.2f", grcor);
     Serial.print(buffer);
-    if (verbose1 == 1) Serial.print("  P: ");
+    if (verbose1 == 1) Serial.print(" P: ");
     sprintf(buffer, "%8.2f", gpcor);
     Serial.print(buffer);
-    if (verbose1 == 1) Serial.print("  Y: ");
+    if (verbose1 == 1) Serial.print(" Y: ");
     sprintf(buffer, "%8.2f", gycor);
     Serial.print(buffer);
     if (verbose1 == 1) Serial.print("");
@@ -312,16 +312,16 @@ void loop() {
     if (verbose1 == 1) Serial.print(" | Field (Gauss) X: ");
     sprintf(buffer, "%5.2f", mx / 100);
     Serial.print(buffer);
-    if (verbose1 == 1) Serial.print("  Y: ");
+    if (verbose1 == 1) Serial.print(" Y: ");
     sprintf(buffer, "%5.2f", my / 100);
     Serial.print(buffer);
-    if (verbose1 == 1) Serial.print("  Z: ");
+    if (verbose1 == 1) Serial.print(" Z: ");
     sprintf(buffer, "%5.2f", mz / 100);
     Serial.print(buffer);
     if (verbose1 == 1) Serial.print(" |");
   }
 
-  // Temperature, humidity, and pressure
+  // Temperature, humidity , and pressure
 
   loopcount ++;
   if (loopcount >= skipcount) {  // Only check T,P,H every skipcount passes
@@ -515,6 +515,5 @@ void RGB_Gyro_Colors (int roll, int pitch, int yaw, float atten) {
   RGB_LED_Color(ledr, ledg, ledb, atten);
   timeout = 16;
   }
-  else if (timeout > 0) timeout--;
+  if (timeout > 0) timeout--;
 }
-

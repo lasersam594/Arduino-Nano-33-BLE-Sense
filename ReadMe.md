@@ -6,7 +6,7 @@ I put these here because while it's almost certain that sketches like these have
 there for years, a Web search has real trouble finding them, especially with AI. ;-)
 
 * Nano_33_BLE_Sense_RGB_LED_Cycle_Colors1.  Fancy version of Blink. ;-)
-* Nano_33_BLE_Sense_Sensor_Test20: Exercise most of the sensors with data and visual displays.
+* Nano_33_BLE_Sense_Sensor_Test21: Exercise most of the sensors with data and visual displays.
 * Nano_33_BLE_Sense_Sensor_Test12: Exercise most of the sensors with data and visual displays.
   This version runs much slower on the Rev2 board for unknown reasons.
 * Nano_33_BLE_Sense_Rev1-2_IMU-TPH_Speed_Test3: Effort to diagnose apparent higher performance of

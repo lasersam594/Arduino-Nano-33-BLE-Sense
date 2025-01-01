@@ -17,7 +17,11 @@
 
 #define serial 1 // Send comments to serial port only if set to 1
 
-#define LED_USER LED_BUILTIN // Set based on specific board type
+#define LED_USER LED_BUILTIN // This should work for most boards.  But for the Seeed Studio XIAO
+                             //  BLE nRF52840 boards, change the pin definition to: #define LED_USER 17;
+                             //  Change the pin mode to: nrf_gpio_cfg_output(LED_USER);
+                             //  To turn on, replace digitalWrite with: nrf_gpio_pin_write(LED_USER,LOW);
+                             //  To turn off, replace digitalWrite with: nrf_gpio_pin_write(LED_USER,HIGH);
 
 #include <ArduinoBLE.h>
 

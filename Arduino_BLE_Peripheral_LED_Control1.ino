@@ -15,7 +15,7 @@
   by Samuel M. Goldwasser, no copyright® by me, do with them as you see fit. ;-)
 */
 
-#define serial 0 // Send data to serial port if 1
+#define serial 0 // Send data to serial port if 1.  Set to 0 for a remote peripheral NOT on USB.
 
 #define LED_USER LED_BUILTIN // This should work for most boards.  But for the Seeed Studio XIAO
                              //  BLE nRF52840 boards, change the pin definition to: #define LED_USER 17;
@@ -92,7 +92,7 @@ void loop() {
       Serial.println(central.address()); // Send the central's MAC address:
     }
     digitalWrite(LED_USER, 1); // Connection active
-    RGB_LED_Color(BLACK);         // Start with BLACK
+    RGB_LED_Color(BLACK);      // Start with BLACK
 
     // while the central is still connected to peripheral:
     while (central.connected()) {
@@ -122,7 +122,7 @@ void loop() {
   }
 }
 
-void RGB_LED_Color(int r, int g, int b) {
+void RGB_LED_Color(int r, int g, int b) { // Display color in RGB LEDs
   analogWrite(LEDR,255-r);
   analogWrite(LEDG,255-g);
   analogWrite(LEDB,255-b);

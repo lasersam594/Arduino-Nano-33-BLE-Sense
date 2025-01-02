@@ -17,7 +17,7 @@ there for years, a Web search has real trouble finding them, especially with AI.
 * Nano_33_BLE_Sense_RGB_LED_Color_via_Bluetooth1: Display colors in RGB_LEDs via Bluetooth.
 * Nano_33_BLE_Sense_Bluetooth_Send_Test1: Send Gyro data via Bluetooth and also display magnitude in
   RGB_LEDs.
-* Arduino_BLE_Central_LED_Control1 and Arduino_BLE_Peripheral_LED_Control1: Mating pair to show
+* Arduino_BLE_Central_LED_Control2 and Arduino_BLE_Peripheral_LED_Control2: Mating pair to show
   example of Bluetooth data transfer between boards.
 
 Written/modified by Samuel M. Goldwasser.  Copyright® (if any) 1994-2025 and additional details in

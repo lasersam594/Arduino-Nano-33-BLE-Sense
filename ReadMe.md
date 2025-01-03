@@ -18,7 +18,9 @@ there for years, a Web search has real trouble finding them, especially with AI.
 * Nano_33_BLE_Sense_Bluetooth_Send_Test1: Send Gyro data via Bluetooth and also display magnitude in
   RGB_LEDs.
 * Arduino_BLE_Central_LED_Control2 and Arduino_BLE_Peripheral_LED_Control2: Mating pair to show
-  example of Bluetooth data transfer between boards.
+  basic example of Bluetooth data transfer between boards.
+* Bluetooth_Send_Gyro_Data5.ino and Bluetooth_Receive_Gyro_Data7.ino: Mating pair to show perhaps
+  useful exmaple of gyroscope data transfer betweeb boards,
 
 Written/modified by Samuel M. Goldwasser.  Copyright® (if any) 1994-2025 and additional details in
 the sketch headers.

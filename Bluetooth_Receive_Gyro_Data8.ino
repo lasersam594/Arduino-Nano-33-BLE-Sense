@@ -172,7 +172,8 @@ void loop() {
           if (verbose1 == 1) Serial.print(" | SN: ");  // print Sequence Number
           sprintf(buffer, "%4d", SN);
           Serial.println(buffer);
-
+        }
+        
 #ifdef nRF52840
             if ((SN & 1) == 1) nrf_gpio_pin_write(LED_USER, LOW);
             else nrf_gpio_pin_write(LED_USER, HIGH);
@@ -182,7 +183,7 @@ void loop() {
             if ((SN & 1) == 1) digitalWrite(LED_USER, HIGH);
             else digitalWrite(LED_USER, LOW);
 #endif 
-        }
+
       RGB_Gyro_Colors(grcor, gpcor, gycor, scale);  
       }
     }

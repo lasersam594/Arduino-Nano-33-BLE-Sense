@@ -62,7 +62,7 @@ int SN = 0;
 int SNprev = 0;
 char buffer[40];
 float grcor, gpcor, gycor;
-int grint, gpint, gyint;
+int32_t grint, gpint, gyint;
 int ledr, ledg, ledb;
 
 void setup() {
@@ -153,12 +153,12 @@ void loop() {
       SNprev = SN;
       if (Sequence_Number.written()) SN = Sequence_Number.value();
       if (SN != SNprev) {
-        if (Gyro_Roll.written()) grint = Gyro_Roll.value(); // Kludge to get signed numbers through Bluetooth
+        if (Gyro_Roll.written()) grint = Gyro_Roll.value();
         if (Gyro_Pitch.written()) gpint = Gyro_Pitch.value();
         if (Gyro_Yaw.written()) gyint = Gyro_Yaw.value();
        
-        deKludge(); // Kludge to get signed numbers through Bluetooth ;-)
-
+        deKludge(); // Kludge to get fractional resolution without using floating point. ;-)
+        
         if (data1 == 1) {
           if (verbose1 == 1) Serial.print("Gyro (Degs/s) Roll: ");
           sprintf(buffer, "%8.2f", grcor);
@@ -240,12 +240,10 @@ void RGB_Gyro_Colors(int roll, int pitch, int yaw, float atten) {
 }
 
 void deKludge() {
-  grcor = grint - 32768;
-  grcor /= 16;
-
-  gpcor = gpint - 32768;
-  gpcor /= 16;
-
-  gycor = gyint - 32768;
-  gycor /= 16;
+  grcor = grint;
+  grcor /= 1000; 
+  gpcor = gpint;
+  gpcor /= 1000;
+  gycor = gyint;
+  gycor /= 1000;
 }

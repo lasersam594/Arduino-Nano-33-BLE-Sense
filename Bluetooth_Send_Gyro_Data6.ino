@@ -45,9 +45,9 @@
 
 #define scale 0.5
 
-int16_t grint = 0;
-int16_t gpint = 0;
-int16_t gyint = 0;
+int32_t grint = 0;
+int32_t gpint = 0;
+int32_t gyint = 0;
 
 // #define nRF52840 // If defined, use nRF52840 CHARGE LED (PIO P0.17) as USER LED.  Comment out otherwise.
 
@@ -324,7 +324,7 @@ void SendGyroData(BLEDevice peripheral) {
 
     SN++;
 
-    enKludge (); // Kludge to get signed numbers through Bluetooth ;-)
+    enKludge(); // Kludge to get fractional resolution without using floating point. ;-)
 
     Gyro_Roll.writeValue(grint);
     Gyro_Pitch.writeValue(gpint);
@@ -437,18 +437,7 @@ void RGB_Gyro_Colors(int roll, int pitch, int yaw, float atten) {
 }
 
 void enKludge() {
-  grint = (grcor * 16);
-  if (grint > 32767) grint = 32767;
-  if (grint < -32767) grint = -32767;
-  grint += 32768;
-
-  gpint = (gpcor * 16);
-  if (gpint > 32767) gpint = 32767;
-  if (gpint < -32767) gpint = -32767;
-  gpint += 32768;
-
-  gyint = (gycor * 16);
-  if (gyint > 32767) gyint = 32767;
-  if (gyint < -32767) gyint = -32767; 
-  gyint += 32768;
+  grint = grcor * 1000; 
+  gpint = gpcor * 1000;
+  gyint = gycor * 1000;
 }

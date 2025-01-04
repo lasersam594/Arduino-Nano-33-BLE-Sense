@@ -45,12 +45,6 @@
 
 #define scale 0.5
 
-int32_t grint = 0;
-int32_t gpint = 0;
-int32_t gyint = 0;
-
-// #define nRF52840 // If defined, use nRF52840 CHARGE LED (PIO P0.17) as USER LED.  Comment out otherwise.
-
 float RollOffsetSum = 0;  // Temporary variables for Gyro AutoCal averaging
 float PitchOffsetSum = 0;
 float YawOffsetSum = 0;
@@ -62,6 +56,14 @@ float GY_COR = 0;
 int CalCount = CalValues;
 int GyroAutoCalFlag = 0;
 float pgr, pgp, pgy;
+
+// variables for BLE characteristic
+
+char buffer[40];
+float gr, gp, gy, grcor, gpcor, gycor;
+int32_t grint, gpint, gyint;
+int32_t SN = 0;
+int led, ledr, ledg, ledb;
 
 #ifndef nRF52840
 #define LED_USER LED_BUILTIN
@@ -81,13 +83,6 @@ float pgr, pgp, pgy;
 
 #include <ArduinoBLE.h>
 
-// variables for BLE characteristic
-
-char buffer[40];
-float gr, gp, gy, grcor, gpcor, gycor;
-int16_t led, ledr, ledg, ledb;
-int16_t SN = 0;
-
 // Bluetooth® Low Energy inertial service (Custom UUIDs)
 
 #define BLE_UUID_INERTIAL_SERVICE               "DA3F7226-D807-40E6-A24C-E9F16EDFCD3B"
@@ -98,11 +93,6 @@ int16_t SN = 0;
 #define BLE_UUID_SEQUENCE_NUMBER                "DA3F7227-D807-40E6-A24C-E9F16EDFCD34"
 
 BLEService inertial(BLE_UUID_INERTIAL_SERVICE);
-
-BLEIntCharacteristic Gyro_Roll(BLE_UUID_GYRO_ROLL, BLEWrite );
-BLEIntCharacteristic Gyro_Pitch(BLE_UUID_GYRO_PITCH, BLEWrite );
-BLEIntCharacteristic Gyro_Yaw(BLE_UUID_GYRO_YAW, BLEWrite );
-BLEIntCharacteristic Sequence_Number(BLE_UUID_SEQUENCE_NUMBER, BLEWrite );
 
 void setup() {
 
@@ -394,10 +384,10 @@ void Do_GyroAutoCal(int Delay) {
         YawOffsetSum = 0;
       }
       else {
-        RollOffsetSum += gr;  // Update sums
+        RollOffsetSum += gr;     // Update sums
         PitchOffsetSum += gp;
         YawOffsetSum += gy;
-        if ((CalCount & 3) == 2) RGB_LED_Color(GRAY, 1.0);  // Heartbeat while AutoCal in progress
+        if ((CalCount & 3) == 2) RGB_LED_Color(GRAY, 1.0);  // Activity indicator while AutoCal in progress
         else RGB_LED_Color(BLACK, 0);
         CalCount--;
       }

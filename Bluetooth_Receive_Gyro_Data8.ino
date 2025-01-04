@@ -48,6 +48,13 @@
 
 #define scale 0.5
 
+char buffer[40];
+float grcor, gpcor, gycor;
+int32_t grint, gpint, gyint;
+int32_t SN = 0;
+int SNprev = 0;
+int ledr, ledg, ledb;
+
 // Bluetooth® Low Energy inertial service (Custom UUIDs)
 
 #define BLE_UUID_INERTIAL_SERVICE               "DA3F7226-D807-40E6-A24C-E9F16EDFCD3B"
@@ -66,16 +73,9 @@ BLEIntCharacteristic Gyro_Pitch(BLE_UUID_GYRO_PITCH, BLEWrite );
 BLEIntCharacteristic Gyro_Yaw(BLE_UUID_GYRO_YAW, BLEWrite );
 BLEIntCharacteristic Sequence_Number(BLE_UUID_SEQUENCE_NUMBER, BLEWrite );
 
-int SN = 0;
-int SNprev = 0;
-char buffer[40];
-float grcor, gpcor, gycor;
-int32_t grint, gpint, gyint;
-int ledr, ledg, ledb;
-
 void setup() {
 
- // Set the LEDs pins as outputs and turn on LED_USER and set the RGB LEDs at low brightness
+ // Set the LEDs pins as outputs.  Turn on LED_USER and set the RGB LEDs at low brightness.
 
 #ifndef nRF52840
   pinMode(LED_USER, OUTPUT);
@@ -92,12 +92,13 @@ void setup() {
   pinMode(LEDB, OUTPUT);
   RGB_LED_Color(GRAY, 1.0);
 
+  // begin initialization
+
   if (data1 == 1) {
     Serial.begin(9600);
     while (!Serial);
   }
 
-  // begin initialization
   if (!BLE.begin()) {
     if (data1 == 1) Serial.println("Starting Bluetooth® Low Energy module failed!");
     while (1);
@@ -105,7 +106,6 @@ void setup() {
 
   // set advertised local name and service UUID:
   BLE.setLocalName("Gyro Monitor");
-
   BLE.setAdvertisedService(inertial);
 
   // add the characteristic to the service
@@ -116,13 +116,6 @@ void setup() {
 
   // add service
   BLE.addService(inertial);
-
-  // set the initial value for the characteristic:
-
-   Gyro_Roll.writeValue(0);
-   Gyro_Pitch.writeValue(0);
-   Gyro_Yaw.writeValue(0);
-   Sequence_Number.writeValue(0);
 
   // start advertising
   BLE.advertise();
@@ -161,11 +154,11 @@ void loop() {
       SNprev = SN;
       if (Sequence_Number.written()) SN = Sequence_Number.value();
       if (SN != SNprev) {
-        if (Gyro_Roll.written()) grint = Gyro_Roll.value();
-        if (Gyro_Pitch.written()) gpint = Gyro_Pitch.value();
-        if (Gyro_Yaw.written()) gyint = Gyro_Yaw.value();
-       
-        deKludge(); // Kludge to get fractional resolution without using floating point. ;-)
+        grint = Gyro_Roll.value();
+        gpint = Gyro_Pitch.value();
+        gyint = Gyro_Yaw.value();
+
+        deKludge(); // Undo the kludge to get fractional resolution without using floating point. ;-)
         
         if (data1 == 1) {
           if (verbose1 == 1) Serial.print("Gyro (Degs/s) Roll: ");

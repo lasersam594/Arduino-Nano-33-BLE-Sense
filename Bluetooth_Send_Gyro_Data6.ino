@@ -88,14 +88,21 @@ float gr, gp, gy, grcor, gpcor, gycor;
 int16_t led, ledr, ledg, ledb;
 int16_t SN = 0;
 
-// Bluetooth® Low Energy inertial service (Custom UUID)
-BLEService inertial("DA3F7226-D807-40E6-A24C-E9F16EDFCD3B");
+// Bluetooth® Low Energy inertial service (Custom UUIDs)
 
-// Bluetooth® Low Energy Characteristic - custom 128-bit UUID, read and writable by central
-BLEIntCharacteristic Gyro_Roll("DA3F7227-D807-40E6-A24C-E9F16EDFCD31", BLERead | BLEWrite | BLENotify);
-BLEIntCharacteristic Gyro_Pitch("DA3F7227-D807-40E6-A24C-E9F16EDFCD32", BLERead | BLEWrite | BLENotify);
-BLEIntCharacteristic Gyro_Yaw("DA3F7227-D807-40E6-A24C-E9F16EDFCD33", BLERead | BLEWrite | BLENotify);
-BLEIntCharacteristic Sequence_Number("DA3F7227-D807-40E6-A24C-E9F16EDFCD34", BLERead | BLEWrite | BLENotify);
+#define BLE_UUID_INERTIAL_SERVICE               "DA3F7226-D807-40E6-A24C-E9F16EDFCD3B"
+
+#define BLE_UUID_GYRO_ROLL                      "DA3F7227-D807-40E6-A24C-E9F16EDFCD31"
+#define BLE_UUID_GYRO_PITCH                     "DA3F7227-D807-40E6-A24C-E9F16EDFCD32"
+#define BLE_UUID_GYRO_YAW                       "DA3F7227-D807-40E6-A24C-E9F16EDFCD33"
+#define BLE_UUID_SEQUENCE_NUMBER                "DA3F7227-D807-40E6-A24C-E9F16EDFCD34"
+
+BLEService inertial(BLE_UUID_INERTIAL_SERVICE);
+
+BLEIntCharacteristic Gyro_Roll(BLE_UUID_GYRO_ROLL, BLEWrite );
+BLEIntCharacteristic Gyro_Pitch(BLE_UUID_GYRO_PITCH, BLEWrite );
+BLEIntCharacteristic Gyro_Yaw(BLE_UUID_GYRO_YAW, BLEWrite );
+BLEIntCharacteristic Sequence_Number(BLE_UUID_SEQUENCE_NUMBER, BLEWrite );
 
 void setup() {
 
@@ -145,7 +152,7 @@ void setup() {
   }
 
   // start scanning for peripherals
-  BLE.scanForUuid("DA3F7226-D807-40E6-A24C-E9F16EDFCD3B");
+  BLE.scanForUuid(BLE_UUID_INERTIAL_SERVICE);
 
   // Configure the IMU
 
@@ -230,10 +237,10 @@ void SendGyroData(BLEDevice peripheral) {
   }
 
   // retrieve the characteristics
-  BLECharacteristic Gyro_Roll = peripheral.characteristic("DA3F7227-D807-40E6-A24C-E9F16EDFCD31");
-  BLECharacteristic Gyro_Pitch = peripheral.characteristic("DA3F7227-D807-40E6-A24C-E9F16EDFCD32");
-  BLECharacteristic Gyro_Yaw = peripheral.characteristic("DA3F7227-D807-40E6-A24C-E9F16EDFCD33"); 
-  BLECharacteristic Sequence_Number = peripheral.characteristic("DA3F7227-D807-40E6-A24C-E9F16EDFCD34");
+  BLECharacteristic Gyro_Roll = peripheral.characteristic(BLE_UUID_GYRO_ROLL);
+  BLECharacteristic Gyro_Pitch = peripheral.characteristic(BLE_UUID_GYRO_PITCH);
+  BLECharacteristic Gyro_Yaw = peripheral.characteristic(BLE_UUID_GYRO_YAW); 
+  BLECharacteristic Sequence_Number = peripheral.characteristic(BLE_UUID_SEQUENCE_NUMBER);
 
   if (!Gyro_Roll) {
     if (data1 == 1) Serial.println("Peripheral does not have Roll Characteristic!");

@@ -1,7 +1,7 @@
 These are basic sketches for the Nano 33 BLE Sense (https://store-usa.arduino.cc/collections/boards-modules/products/nano-33-ble-sense-rev2).
 
 These apply to both the Nano 33 BLE Sense Rev1 and Rev2 boards and to some Seeed Studio nRF boards and
-others.  One or two #defines near to of sketches may need to be enabled/disabled for specific board types.
+others.  One or two #defines near to of the sketches may need to be enabled/disabled for specific board types.
 
 I put these here because while it's almost certain that sketches like these have been out
 there for years, a Web search has real trouble finding them, especially with AI. ;-)

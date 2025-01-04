@@ -1,6 +1,7 @@
 These are basic sketches for the Nano 33 BLE Sense (https://store-usa.arduino.cc/collections/boards-modules/products/nano-33-ble-sense-rev2).
 
-These apply to both the Rev1 and Rev2 boards and to some Seeed Studio nRF boards.
+These apply to both the Nano 33 BLE Sense Rev1 and Rev2 boards and to some Seeed Studio nRF boards and
+others.  One or two #defines near to of sketches may need to be enabled/disabled for specific board types.
 
 I put these here because while it's almost certain that sketches like these have been out
 there for years, a Web search has real trouble finding them, especially with AI. ;-)
@@ -21,8 +22,6 @@ there for years, a Web search has real trouble finding them, especially with AI.
    basic example of Bluetooth data transfer between boards.
 8. Bluetooth_Send_Gyro_Data6.ino and Bluetooth_Receive_Gyro_Data8.ino: Mating pair to show perhaps
    semi-useful exmaple of gyroscope data transfer betweeb boards.
-
-Note: #defines near to of sketches may need to be enabled for spefici board types.
 
 Written/modified by Samuel M. Goldwasser.  Copyright® (if any) 1994-2025 and additional details in
 the sketch headers.

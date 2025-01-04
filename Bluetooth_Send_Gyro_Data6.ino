@@ -1,5 +1,5 @@
 /*
-  Bluetooth Send Gyro Data 5
+  Bluetooth Send Gyro Data 6
 
   Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.  Permission is granted for public
   use or modification as long as the Copyright notice is included.
@@ -8,14 +8,15 @@
   using generated "DA3F7226-D807-40E6-A24C-E9F16EDFCD3B" UUID is found. Once discovered and connected,
   Central sends values for roll, pitch, and yaw of the gyroscope, and a sequence number.  The signed
   amplitude of the Gyro measurements are also displayed as intensity of the RGB LEDs on both boards
-  coded as roll (+Red/-Cyan), Pitch (+Green/-Magenta), and Yaw (+Blue/-Yellow).
+  coded as roll (+Red/-Cyan), Pitch (+Green/-Magenta), and Yaw (+Blue/-Yellow).  The USER LED will
+  blink at 1/2 the sample rate.
  
   Tested with Arduino Nano 33 BLE Sense and Seeed Studio XIAO nRF52840 Sense boards, but the Central
   sketch should work with any board that is BLE-compatible with minor changes depending on the
   specific IMU.  The companion Peripheral sketch requires a BLE-compatible board with RGB LEDs, or
   could be modified with external LEDs on pins that support analogWrite, or as required.
  
-  Uncomment and select the #define Rev for the Nano 33 BLE Sense; uncomment the #define nRF52840 line
+  Uncomment and select the #define Rev for the Nano 33 BLE Sense; Uncomment the #define nRF52840 line
   for use with that board.  This affects both selection of the appropriate IMU and, how the USER LED
   is is accessed since it is not on a normal digital pin on the nRF52840.
 */

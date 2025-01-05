@@ -66,19 +66,19 @@ int32_t grint, gpint, gyint;
 int32_t SN = 0;
 int led, ledr, ledg, ledb;
 
-#ifndef nRF52840
-#define LED_USER LED_BUILTIN
-#endif
-
 #ifdef nRF52840
 #define LED_USER 17
+#include <LSM6DS3.h>           // IMU
+LSM6DS3 myIMU(I2C_MODE, 0x6A); //I2C device address 0x6A
 #endif
 
 #ifdef Rev1
+#define LED_USER LED_BUILTIN
 #include <Arduino_LSM9DS1.h>  // Accelerometer, magnetometer and gyroscope
 #endif
 
 #ifdef Rev2
+#define LED_USER LED_BUILTIN
 #include <Arduino_BMI270_BMM150.h>  // Accelerometer, magnetometer and gyroscope
 #endif
 

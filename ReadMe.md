@@ -22,7 +22,7 @@ there for years, a Web search has real trouble finding them, especially with AI.
 7. Arduino_BLE_Central_LED_Control2 and Arduino_BLE_Peripheral_LED_Control2: Mating pair to show
    basic example of Bluetooth data transfer between boards.
 8. Bluetooth_Send_Gyro_Data6.ino and Bluetooth_Receive_Gyro_Data8.ino: Mating pair to show perhaps
-   semi-useful exmaple of gyroscope data transfer betweeb boards.
+   semi-useful exmaple of Bluetooth gyroscope data transfer between boards.
 
 Written/modified by Samuel M. Goldwasser.  Copyright® (if any) 1994-2025 and additional details in
 the sketch headers.

@@ -4,6 +4,9 @@ These apply to both the Nano 33 BLE Sense Rev1 and Rev2 boards and to some Seeed
 others.  One or two #defines near the top of the sketches may need to be enabled/disabled for specific
 board types.
 
+Note that not all combinations of boards have been tested with these sketches.  Please contact me if
+there are problems.
+
 I put these here because while it's almost certain that sketches like these have been out
 there for years, a Web search has real trouble finding them, especially with AI. ;-)
 

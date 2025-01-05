@@ -9,7 +9,8 @@
   Central sends values for roll, pitch, and yaw of the gyroscope, and a sequence number.  The signed
   amplitude of the Gyro measurements are also displayed as intensity of the RGB LEDs on both boards
   coded as roll (+Red/-Cyan), Pitch (+Green/-Magenta), and Yaw (+Blue/-Yellow).  The USER LED will
-  blink at 1/2 the sample rate.
+  blink at 1/2 the sample rate.  The PWR LED, if present and controllable, will go off.  No, the
+  thing hasn't crashed. ;-)
  
   Tested with Arduino Nano 33 BLE Sense and Seeed Studio XIAO nRF52840 Sense boards, but the Central
   sketch should work with any board that is BLE-compatible with minor changes depending on the
@@ -112,6 +113,11 @@ void setup() {
 
   // Set the LEDs pins as outputs and turn on LED_USER and set the RGB LEDs at low brightness
 
+#if defined (Rev1) || defined (Rev2)
+  pinMode(LED_PWR, OUTPUT);
+  digitalWrite(LED_PWR, HIGH);
+#endif
+
 #ifndef nRF52840
   pinMode(LED_USER, OUTPUT);
   digitalWrite(LED_USER, LOW);
@@ -199,7 +205,12 @@ void SendGyroData(BLEDevice peripheral) {
   if (peripheral.connect()) {
     if (data1 == 1) Serial.println("Connected");
 
-#ifndef nRF52840
+    // Connection active
+#if defined (Rev1) || defined (Rev2)
+    digitalWrite(LED_PWR, LOW);
+#endif
+
+#ifndef nRF52840  
     digitalWrite(LED_USER, HIGH);
 #endif
 
@@ -342,6 +353,12 @@ void SendGyroData(BLEDevice peripheral) {
   }
 
 if (data1 == 1) Serial.println("Peripheral disconnected");
+
+  // Connection innactive
+
+#if defined (Rev1) || defined (Rev2)
+  digitalWrite(LED_PWR, HIGH);
+#endif
 
 #ifndef nRF52840
   digitalWrite(LED_USER, LOW);

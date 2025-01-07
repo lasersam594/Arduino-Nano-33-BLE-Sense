@@ -44,7 +44,7 @@
 */
 
 // Select Nano BLE 33 Sense Rev1 or Rev2
-#define Rev1
+#define Rev2
 
 // User parameters
 #define data1 1           // Sends data to serial port if 1, LEDs-only on Nano if 0

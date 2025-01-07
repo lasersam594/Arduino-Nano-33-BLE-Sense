@@ -390,8 +390,8 @@ void loop() {
     for (i = 0; i < samplesRead; i++)
       if (fabs(sampleBuffer[i]) > sum) sum = fabs(sampleBuffer[i]);  // Peak detect
 
-    // Display the peak sound value in RGB_LED
-    if (((fabs(grcor) < 1) && (fabs(gpcor) < 1) && (fabs(gycor)) < 1)) {  // Only if no Gyro activity and GyroAutoCAl not in progress
+    // Display the peak sound value in RGB_LEDs
+    if (((fabs(grcor) < 1) && (fabs(gpcor) < 1) && (fabs(gycor)) < 1)) {  // Only if no Gyro activity
       if (sum >= 1000) RGB_LED_Color(WHITE, 1.0);
       else if (sum >= 600) RGB_LED_Color(RED, 1.0);
       else if (sum >= 400) RGB_LED_Color(ORANGE, 0.8);
@@ -403,7 +403,7 @@ void loop() {
       else if (sum >= 25) RGB_LED_Color(GRAY, 1.0);
       else if (sum >= 0) RGB_LED_Color(BLACK, 0.0);
     }
-    if (sum >= 25) timeout = timeoutvalue * 2;
+    if (sum >= 25) timeout = timeoutvalue;
   }
 
   if (data1 == 1) {

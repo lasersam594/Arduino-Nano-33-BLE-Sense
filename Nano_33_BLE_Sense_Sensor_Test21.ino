@@ -44,7 +44,7 @@
 */
 
 // Select Nano BLE 33 Sense Rev1 or Rev2
-#define Rev2
+#define Rev1
 
 // User parameters
 #define data1 1           // Sends data to serial port if 1, LEDs-only on Nano if 0
@@ -62,7 +62,6 @@
 float RollOffsetSum = 0;  // Temporary variables for Gyro AutoCal sums
 float PitchOffsetSum = 0;
 float YawOffsetSum = 0;
-
 float GR_COR = 0;         // Gyro offset correction values
 float GP_COR = 0;
 float GY_COR = 0;
@@ -79,7 +78,7 @@ float pgr, pgp, pgy;
 #define BLUE 0, 0, 255
 #define CYAN 0, 255, 125
 #define GREEN 0, 255, 0
-#define YELLOW 255, 182, 0
+#define YELLOW 255, 255, 0
 #define ORANGE 255, 50, 0
 #define RED 255, 0, 0
 #define WHITE 255, 255, 255
@@ -107,7 +106,6 @@ float pgr, pgp, pgy;
 #include <Arduino_LPS22HB.h>        // Pressure
 #include <Arduino_APDS9960.h>       // RGB light and proximity
 #include <PDM.h>                    // Microphone
-
 #include <SPI.h>
 
 float ax, ay, az, gr, gp, gy, grcor, gpcor, gycor, mx, my, mz;
@@ -264,7 +262,7 @@ void loop() {
   while (!IMU.accelerationAvailable());
   IMU.readAcceleration(ax, ay, az);
   if (data1 == 1) {
-    if (verbose1 == 1) Serial.print("  Axl (Gs) X: ");
+    if (verbose1 == 1) Serial.print("  Acc (Gs) X: ");
     sprintf(buffer, "%5.2f", ax);
     Serial.print(buffer);
     if (verbose1 == 1) Serial.print(" Y: ");
@@ -428,7 +426,7 @@ void loop() {
   // Heartbeat
   count++;
   if (count >= timeoutvalue) {
-    if ((proximity > 230) && (ledr <= 8) && (ledg <= 8) && (ledb <= 8) && (sum < 25) && (timeout == 0)) {
+    if ((proximity > 230) && (sum < 25) && (timeout == 0)) {
       analogWrite(LED_BUILTIN, 255);  // Pulse BUILTIN led
       count = 0;
     }
@@ -505,7 +503,7 @@ void RGB_Axis_Colors(int Pos_R, int Pos_G, int Pos_B, int Neg_R, int Neg_G, int 
 }
 
 void RGB_Gyro_Colors (int roll, int pitch, int yaw, float atten) {
-  if ((fabs(roll) / 2 > 8) || ((fabs(pitch) / 2) > 8) || ((fabs(yaw) / 2) > 8)) { // Update if above threahold
+  if ((fabs(roll) > 1) || (fabs(pitch) > 1) || (fabs(yaw) > 1)) { // Update if above threahold
   ledr = 0;
   ledg = 0;
   ledb = 0;

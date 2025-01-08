@@ -1,5 +1,5 @@
 /*
-   Bluetooth Receive Gyro Data 11
+  Bluetooth Receive Gyro Data 11
 
   Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.  Permission is granted for public
   use or modification as long as the Copyright notice is included.

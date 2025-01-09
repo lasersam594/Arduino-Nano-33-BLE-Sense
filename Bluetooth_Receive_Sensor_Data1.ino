@@ -132,10 +132,6 @@ int holdoff = timeoutvalue;
 #define BLE_UUID_SPARE1                         "DA3F7227-D807-40E6-A24C-E9F16EDFCD45"
 #endif
 
-#ifdef Spare_2
-#define BLE_UUID_SPARE2                         "DA3F7227-D807-40E6-A24C-E9F16EDFCD46"
-#endif
-
 #define BLE_UUID_SEQUENCE_NUMBER                "DA3F7227-D807-40E6-A24C-E9F16EDFCD47"
 
 #include <ArduinoBLE.h>

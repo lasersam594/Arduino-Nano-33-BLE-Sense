@@ -63,17 +63,11 @@
 #define Proximity             // Proximity value
 //#define Light_Intensity       // RGB light values
 //#define Input_Level           // Send generic input level
-
 #define Microphone              // Send peak audio level
 //#define Random_Number         // Send random number
 //#define Spare 1               // Future
-//#define Spare 2               // Future
 
-
-#define Microphone            // Send peak audio as level
-//#define Random_Number1       // Send random number as level
-
-#define LED_USER LED_BUILTIN
+//#define Diagnostics          // Send diagnostic data
 
 // Gyro offset parameters and variables
 #define CalValues 50      // Number of Gyro samples to average for calibration
@@ -111,14 +105,14 @@ float pgr, pgp, pgy;
 #ifdef Rev1
 #include <Arduino_LSM9DS1.h>        // Accelerometer, magnetometer and gyroscope
 #include <Arduino_HTS221.h>         // Temperature and humidity
-#define timeoutvalue  17
+#define timeoutvalue  8
 #define skipcount 25
 #endif
 
 #ifdef Rev2
 #include <Arduino_BMI270_BMM150.h>  // Accelerometer, magnetometer and gyroscope
 #include <Arduino_HS300x.h>         // Temperature and humidity
-#define timeoutvalue  17
+#define timeoutvalue  8
 #define skipcount 25
 #endif
 
@@ -132,7 +126,7 @@ float ax, ay, az, gr, gp, gy, grcor, gpcor, gycor, mx, my, mz;
 float temperature = 0;
 float pressure = 0;
 float humidity = 0;
-int proximity = 0;
+int proximity = 255;
 int count = 0;
 int i = 0;
 int timeout = 0;
@@ -142,6 +136,22 @@ int32_t grint, gpint, gyint;
 int32_t SN = 0;
 int SNPrint;
 uint16_t level = 0;
+int Activity_Flags = 0;
+int Send_Flags = 0;
+
+// Activity and send selection flags
+#define Accel_Flag               1
+#define Gyro_Flag                2
+#define Field_Flag               4
+#define Environment_Flag         8
+#define Proximity_Flag          16
+#define Light_Flag              32
+#define Microphone_Flag         64
+#define Input_Level_Flag       128
+#define Random_Number_Flag     256
+#define Diagnostics_Flag       512
+#define Spare1_Flag           1024
+#define Sequence_Number_Flag  2048
 
 short sampleBuffer[1024];       // buffer to read audio samples into, each sample is 16-bits
 volatile int samplesRead = 0;   // number of samples read
@@ -213,10 +223,6 @@ int led, ledr, ledg, ledb;
 
 #ifdef Spare_1
 #define BLE_UUID_SPARE1                         "DA3F7227-D807-40E6-A24C-E9F16EDFCD45"
-#endif
-
-#ifdef Spare_2
-#define BLE_UUID_SPARE2                         "DA3F7227-D807-40E6-A24C-E9F16EDFCD46"
 #endif
 
 #define BLE_UUID_SEQUENCE_NUMBER                "DA3F7227-D807-40E6-A24C-E9F16EDFCD47"
@@ -295,18 +301,21 @@ void setup() {
 
   // Startup
 
+#ifdef Gyroscope
   if (!IMU.begin()) {
     if (data1 == 1) Serial.println("Failed to initialize IMU!");
     while (1);
   }
+#endif
 
   // Version-specific temperature and humidity sensor libraries
 
-/*
+#ifdef Environment
+
 #ifdef Rev1
   if (!HTS.begin()) {
 #endif
-*/
+
 #ifdef Rev2
   if (!HS300x.begin()) {
 #endif
@@ -323,6 +332,9 @@ void setup() {
   if (!APDS.begin()) {
     if (data1 == 1) Serial.println("Failed to initialize APDS9960 sensor!");
   }
+#endif
+
+#ifdef Microphone
 
   // configure the data receive callback
   PDM.onReceive(onPDMdata);
@@ -334,7 +346,9 @@ void setup() {
   }
 
   PDM.setBufferSize(1024);  // 512 is default; 1024 works but 2048 hangs
-  PDM.setGain(25);          // Optionally set gain, defaults to 20
+  PDM.setGain(15);          // Optionally set gain, defaults to 20
+
+#endif
 
   // Banner blurb
 
@@ -346,7 +360,7 @@ void setup() {
     #endif
 
     #ifdef Rev2
-      Serial.print("**** Arduino Nano 33 BLE Sense Rev2 Sensor Test Version ");
+      Serial.print("**** Bluetooth Send Sensor Data Version ");
     #endif
 
     Serial.print(Ver);
@@ -354,15 +368,37 @@ void setup() {
     Serial.println();
     Serial.println("Functions:");
     Serial.println();
+
+#ifdef Accelerometer
     Serial.println("  - Acceleration in Gs.");
-    Serial.println("  - Angle in degrees/second. LED threshold 25.");
+#endif
+
+#ifdef Gyroscope
+    Serial.println("  - Gyro angle in degrees/second. LED threshold 25.");
+#endif
+
+#ifdef Magnetic_Field
     Serial.println("  - Magnetic field in Gauss.");
+#endif
+
+#ifdef Environment
     Serial.println("  - Temperature in degrees Centigrade.");
     Serial.println("  - Pressure in mm/Hg.");
     Serial.println("  - Humidity in rel %.");
+#endif
+
+#ifdef Proximity
     Serial.println("  - Proximity in arbitrary units.");
+#endif
+
+#ifdef Light_Intensity
     Serial.println("  - RGB light intensity in arbitrary units.");
+#endif
+
+#ifdef Microphone
     Serial.println("  - Peak soundlevel in arbitrary units.");
+#endif
+
     Serial.println();
     Serial.println("Data:");
     Serial.println("");
@@ -410,11 +446,11 @@ void SendSensorData(BLEDevice peripheral) {
 
   if (peripheral.connect()) {
     if (data1 == 1) Serial.println("Connected");
-    digitalWrite(LED_USER, HIGH);
+    digitalWrite(LED_BUILTIN, HIGH);
   }
   else {
     if (data1 == 1) Serial.println("Failed to connect!");
-      digitalWrite(LED_USER, LOW);
+      digitalWrite(LED_BUILTIN, LOW);
     return;
   }
    // discover peripheral attributes
@@ -432,11 +468,11 @@ void SendSensorData(BLEDevice peripheral) {
   }
 
   // retrieve the characteristics
+
+#ifdef Gyroscope
   BLECharacteristic Gyro_Roll = peripheral.characteristic(BLE_UUID_GYRO_ROLL);
   BLECharacteristic Gyro_Pitch = peripheral.characteristic(BLE_UUID_GYRO_PITCH);
   BLECharacteristic Gyro_Yaw = peripheral.characteristic(BLE_UUID_GYRO_YAW);
-  BLECharacteristic Audio_Level = peripheral.characteristic(BLE_UUID_MICROPHONE); 
-  BLECharacteristic Sequence_Number = peripheral.characteristic(BLE_UUID_SEQUENCE_NUMBER);
 
   if (!Gyro_Roll) {
     if (data1 == 1) Serial.println("Peripheral does not have Roll Characteristic!");
@@ -473,6 +509,11 @@ void SendSensorData(BLEDevice peripheral) {
     peripheral.disconnect();
     return;
   }
+#endif
+
+#ifdef Microphone
+
+  BLECharacteristic Audio_Level = peripheral.characteristic(BLE_UUID_MICROPHONE); 
 
   if (!Audio_Level) {
     if (data1 == 1) Serial.println("Peripheral does not have Audio_Level Characteristic!");
@@ -485,6 +526,9 @@ void SendSensorData(BLEDevice peripheral) {
     peripheral.disconnect();
     return;
   }
+#endif
+
+  BLECharacteristic Sequence_Number = peripheral.characteristic(BLE_UUID_SEQUENCE_NUMBER);
 
   if (!Sequence_Number) {
     if (data1 == 1) Serial.println("Peripheral does not have Sequence_Number Characteristic!");
@@ -503,6 +547,8 @@ void SendSensorData(BLEDevice peripheral) {
     Serial.println(peripheral.address());  // Send the peripheral's MAC address
     if (data1 == 1) Serial.println();
   }
+
+  analogWrite(LED_BUILTIN, 0);
 
   while (peripheral.connected()) {
 
@@ -608,19 +654,20 @@ void SendSensorData(BLEDevice peripheral) {
     if (verbose1 == 1) Serial.print(" mm/Hg; H: ");
     sprintf(buffer, "%5.2f", humidity);
     Serial.print(buffer);
-    if (verbose1 == 1) Serial.print("% | Prox:");
   }
 #endif
 
 #ifdef Proximity
+
     // Proximity
 
   if (APDS.proximityAvailable()) proximity = APDS.readProximity();
-  analogWrite(LED_BUILTIN, 230 - proximity);
+    analogWrite(LED_BUILTIN, 230 - proximity);
 
-  if (data1 == 1) {
-    sprintf(buffer, " %3d", proximity);
-    Serial.print(buffer);
+      if (data1 == 1) {
+        if (verbose1 == 1) Serial.print("% | Prox:");
+        sprintf(buffer, " %3d", proximity);
+        Serial.print(buffer);
   }
 #endif
 
@@ -650,6 +697,7 @@ void SendSensorData(BLEDevice peripheral) {
 
   int i = 0;
   sum = 0;
+  Activity_Flags &= !Microphone_Flag; // Clear microphone flag
 
   if (samplesRead) {  // wait for samples to be read 
     for (i = 0; i < samplesRead; i++)
@@ -666,17 +714,20 @@ void SendSensorData(BLEDevice peripheral) {
       else if (sum >= 100) RGB_LED_Color(BLUE, 0.3);
       else if (sum >= 50) RGB_LED_Color(MAGENTA, 0.2);
       else if (sum >= 25) RGB_LED_Color(GRAY, 1.0);
-      else if (sum >= 0) RGB_LED_Color(BLACK, 0.0);
+      else RGB_LED_Color(BLACK, 0.0);
     }
-    if (sum >= 25) timeout = timeoutvalue;
+    if (sum >= 25) {
+      timeout = timeoutvalue;
+      Activity_Flags |= Microphone_Flag; // Set microphone flag
+    }
   }
 
   if (data1 == 1) {
     if (verbose1 == 1) Serial.print(" | Mic: ");
     sprintf(buffer, "%4d", sum);
     Serial.print(buffer);
-    if (senddiag1 == 0) Serial.println("");
   }
+
 #endif
 
 #ifdef Gyroscope
@@ -694,12 +745,16 @@ void SendSensorData(BLEDevice peripheral) {
 
     Sequence_Number.writeValue(SN);
 
+/*
     if ((SN & 7) == 7) {
-      digitalWrite(LED_USER, HIGH);
+      digitalWrite(LED_BUILTIN, HIGH);
+//      digitalWrite(LED_PWR, LOW);
       delay(10);
-      digitalWrite(LED_USER, LOW);
+      digitalWrite(LED_BUILTIN, LOW);
+//      digitalWrite(LED_PWR, HIGH);
+      delay(1000);
     }
-
+*/
     SN++;
 
   // Optional diagnostic field
@@ -708,23 +763,28 @@ void SendSensorData(BLEDevice peripheral) {
       if (verbose1 == 1) Serial.print(" | Diag: ");
       sprintf(buffer, "%4d", diag);
       Serial.print(buffer);
-      Serial.println("");
     }
   }
 
-  // Heartbeat
+  if (data1 == 1)  Serial.println("");
+
+  // Heartbeat: Pulse BUILTIN led if nothing going on
   count++;
   if (count >= timeoutvalue) {
-    if ((proximity > 230) && (sum < 25) && (timeout == 0)) {
- //     analogWrite(LED_BUILTIN, 255);  // Pulse BUILTIN led
+    if ((fabs(grcor) < 1) && (fabs(gpcor) < 1) && (fabs(gycor) < 1) && (proximity > 230) && (Activity_Flags == 0) && (timeout == 0)) {
+      digitalWrite(LED_BUILTIN, 1); 
+      delay(10);
+      digitalWrite(LED_BUILTIN, 0);
       count = 0;
     }
   }
 
+#ifdef Microphone
   samplesRead = 0;  // Clear microphone sample buffer
-  delay(timeoutvalue);
-  // digitalWrite(LED_PWR, !(digitalRead(LED_PWR))); // Diagnostic loop rate indicator
+#endif
 
+  // delay(timeoutvalue);
+  // digitalWrite(LED_PWR, !(digitalRead(LED_PWR))); // Diagnostic loop rate indicator
   }
 
   // Connection innactive
@@ -734,8 +794,7 @@ void SendSensorData(BLEDevice peripheral) {
   }
  
   digitalWrite(LED_PWR, HIGH);
-  digitalWrite(LED_USER, LOW);
-
+  digitalWrite(LED_BUILTIN, LOW);
   RGB_LED_Color(BLACK, 0);
 }
 
@@ -745,6 +804,7 @@ void RGB_LED_Color(int r, int g, int b, float intensity) {
     analogWrite(LEDB, (255 - (b * intensity)));
   }
 
+#ifdef Microphone
 void onPDMdata() {
   // query the number of bytes available
   int bytesAvailable = PDM.available();
@@ -755,6 +815,7 @@ void onPDMdata() {
   // 16-bit, 2 bytes per sample
   samplesRead = bytesAvailable / 2;
 }
+#endif
 
 void Do_GyroAutoCal (int Delay) {
   RGB_LED_Color(BLACK, 0);
@@ -806,16 +867,19 @@ void RGB_Axis_Colors(int Pos_R, int Pos_G, int Pos_B, int Neg_R, int Neg_G, int 
 }
 
 void RGB_Gyro_Colors (int roll, int pitch, int yaw, float atten) {
-  if ((fabs(roll) > 1) || (fabs(pitch) > 1) || (fabs(yaw) > 1)) { // Update if above threahold
-  ledr = 0;
-  ledg = 0;
-  ledb = 0;
-  RGB_Axis_Colors(RED, CYAN, roll);
-  RGB_Axis_Colors(GREEN, MAGENTA, pitch);
-  RGB_Axis_Colors(BLUE, YELLOW, yaw);
-  RGB_LED_Color(ledr, ledg, ledb, atten);
-  timeout = 16;
+    ledr = 0;
+    ledg = 0;
+    ledb = 0;
+    if ((fabs(roll) > 1) || (fabs(pitch) > 1) || (fabs(yaw) > 1)) { // Update if above threahold
+    RGB_Axis_Colors(RED, CYAN, roll);
+    RGB_Axis_Colors(GREEN, MAGENTA, pitch);
+    RGB_Axis_Colors(BLUE, YELLOW, yaw);
+    RGB_LED_Color(ledr, ledg, ledb, atten);
+    Activity_Flags |= Gyro_Flag;
+    timeout = 16;
   }
+  else if (sum <= 25) RGB_LED_Color(BLACK, 0);
+  Activity_Flags &= !Gyro_Flag;
   if (timeout > 0) timeout--;
 }
 

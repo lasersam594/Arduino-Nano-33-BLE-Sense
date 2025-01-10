@@ -79,7 +79,7 @@ int holdoff = timeoutvalue;
 uint Activity_Flags = 0;
 uint Send_Flags = 0;
 
-// Activity and send selection flags.  Must shift up by 20 to stuff in SN word.
+// Activity and send selection flags.  Must shift up by 20 to stuff in SN.
 #define Accelerometer_Flag       0x1
 #define Gyroscope_Flag           0x2
 #define Magnetic_Field_Flag      0x4
@@ -325,7 +325,7 @@ void loop() {
 
 #ifdef Microphone
          if (sendData == 1) {
-          if (verbose1 == 1) Serial.print(" | Level: ");
+          if (verbose1 == 1) Serial.print(" | Mic: ");
           sprintf(buffer, "%4d", level);
           Serial.println(buffer);
         }

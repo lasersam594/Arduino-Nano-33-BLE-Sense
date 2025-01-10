@@ -1,32 +1,35 @@
 /*
-  Bluetooth Receive Gyro Data 11
-
-  Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.  Permission is granted for public
-  use or modification as long as the Copyright notice is included.
-
-  This sketch scans for Bluetooth® Low Energy peripherals with "inertial plus service".  It then
-  sends values for roll, pitch, and yaw of the gyroscope, and a sequence number to Peripheral via
-  Bluetooth.  These are also sent to the serial ports on both boards if available.  The signed
-  amplitude of the Gyro measurements are also displayed as intensity of the RGB LEDs on both boards
-  coded as roll (+Red/-Cyan), Pitch (+Green/-Magenta), and Yaw (+Blue/-Yellow).  The USER LED
-  will blink at 1/8 the sample rate if there is no gyro activity.  The PWR LED, if present and 
-  controllable, will go off.  No, the thing hasn't crashed. ;-)
-
-  It also sends a 12 bit random number called "Level" and if there is no gyro activity, that is
-  displayed in the RGB LEDs on both boards as red, green, blue, and intensity in the format IBGR,
-  each 3 bits, which will appear, uh, quite random.  Level was supposed to be peak sound intensity
-  but starting the PDM microphone does cause the entire thing to crash.  Go figure. ;-)  Level could
-  be assigned to something useful in the future.  Or the issue could be resolved.
+  Bluetooth Receive Sensor Data 1
  
-  Tested with Arduino Nano 33 BLE Sense and Seeed Studio XIAO nRF52840 Sense boards (though not all
-  combinations).  The Central sketch should work with any board that is BLE-compatible with minor
-  changes depending on the specific IMU.  The companion Peripheral sketch requires a BLE-compatible
-  board with RGB LEDs, or could be modified with external LEDs on pins that support analogWrite, or
-  as required.  Please contact me with questions.
- 
-  Uncomment and select the #define Rev for the Nano 33 BLE Sense; Uncomment the #define nRF52840 line
-  for use with that board.  This affects both selection of the appropriate IMU and, how the USER LED
-  is accessed since it is not on a normal digital pin on the nRF52840.
+  Copyright® Samuel M. Goldwasser, 1994-2025, all rights reserved.  Permission is granted for public use or modification as
+  long as the Copyright notice is included.
+
+  This is a pair sketches to exercise selected Nano BLE 33 Sense Rev1 or Rev2 sensors using the on-board LEDs and serial
+  port, and to send selected sets of values to another BLE enabled board.  Tested with the Nano 33 BLE Sense Rev1 and Rev2
+  for the sender and the Seed Studio XIAO nRF53840 Sense for the receiver,  But many others boards should work with trivial
+  modifications.  Famous last words! ;-)
+
+  The required libraries are all either built into the Arduino IDE or Arduino Cloud Editor, or readily found via a Web
+  search.  Note that the primary difference between the Rev1 and Rev2 sketches are the libraries for the IMU and T/H.
+
+  Accelerometer (Gs) X, Y, Z; Gyroscope (Degs/s) Roll, Pitch, Yaw; Magnetic Field (Gauss) X, Y, Z; Temperature (DegC),
+  Pressure (mm/Hg), Humidity (%), Proximity (Prox), RGB Light Detect (R, G, B), and peak audio level (Mic) are optionally
+  acquired and may be sent via the serial port as data-only, or with labels, and via Bluetooth to another board.
+
+  The way it is set up by default, all the data listed above is acquired and displayed, but only Gyro (roll, pitch, yaw),
+  Proximity, and peak audio level are sent via Bluetooth.  Strightforward modifications will be required of both the sending
+  and receiving sketches to add some or all of the others.
+
+  In addition to the data, the on-board BUILTIN (or USER) LED, PWR LED (if available), and RGB LEDs provide visual output:
+
+  1. Gyroscope: Displays the values for roll, pitch, and yaw as the brightness of each if the RGB leds as roll (+red/-cyan),
+     pitch (+green/-magenta), and yaw (+blue/-yellow).  Optional gyro calibration to compensate for board-specific roll, pitch,
+     and yaw offsets.  If GyroAutoCall is enabled, the board must remain stationary at startup while the RGB LEDs are blinking.
+     The default duration is ~12 blinks, under 1 second.  This may only be needed for Rev1 boards.
+  2. Proximity: Displays the distance as the brightness of the BUILTIN_LED (bright is closest).
+  3. Static Tilt (accelerometer Z value): Turns on the PWR_LED (if available) if more than approximately 45 degrees.
+  4. Microphone: Displays the peak intensity of the audio on a color scale using the RGB LEDs ONLY when the Gyro is not active.
+  5. Heartbeat: The BUILTIN_LED flashes at an approximately 1 Hz rate if there is no display activity.
 */
 
 // user settings
@@ -37,7 +40,7 @@
 
 #define Gyroscope            // Send Roll, Pitch, Yaw over BLE
 #define Microphone           // Send peak audio as level over BLE
-//#define Random_Number       // Send random number as level over BLE
+// #define Random_Number        // Send random number as level over BLE
 
 #ifndef nRF52840
 #define LED_USER LED_BUILTIN
@@ -66,13 +69,28 @@
 char buffer[40];
 float grcor, gpcor, gycor, bright;
 int32_t grint, gpint, gyint;
-int32_t SN = 0;
+uint32_t SN = 0;
 int SNPrint;
 int SNprev = 0;
 int ledr, ledg, ledb;
 int sendData = data1;
 uint16_t level;
 int holdoff = timeoutvalue;
+uint Activity_Flags = 0;
+uint Send_Flags = 0;
+
+// Activity and send selection flags.  Must shift up by 20 to stuff in SN word.
+#define Accelerometer_Flag       0x1
+#define Gyroscope_Flag           0x2
+#define Magnetic_Field_Flag      0x4
+#define Environment_Flag         0x8
+#define Proximity_Flag          0x10
+#define Light_Detector_Flag     0x20
+#define Microphone_Flag         0x40
+#define Input_Level_Flag        0x80
+#define Random_Number_Flag     0x100
+#define Diagnostics_Flag       0x200
+#define Heartbeat_Flag         0x800
 
 // Bluetooth® Low Energy inertial plus service (Custom UUIDs)
 
@@ -132,7 +150,7 @@ int holdoff = timeoutvalue;
 #define BLE_UUID_SPARE1                         "DA3F7227-D807-40E6-A24C-E9F16EDFCD45"
 #endif
 
-#define BLE_UUID_SEQUENCE_NUMBER                "DA3F7227-D807-40E6-A24C-E9F16EDFCD47"
+#define BLE_UUID_SEQUENCE_NUMBER                "DA3F7227-D807-40E6-A24C-E9F16EDFCD4F"
 
 #include <ArduinoBLE.h>
 
@@ -193,10 +211,18 @@ void setup() {
   BLE.setAdvertisedService(inertial_plus);
 
   // add the characteristics to the service
+#ifdef Gyroscope
   inertial_plus.addCharacteristic(Gyro_Roll);
   inertial_plus.addCharacteristic(Gyro_Pitch);
   inertial_plus.addCharacteristic(Gyro_Yaw);
+  Send_Flags |= Gyroscope_Flag;
+#endif
+
+#ifdef Microphone
   inertial_plus.addCharacteristic(Audio_Level);
+  Send_Flags |= Microphone_Flag;
+#endif
+
   inertial_plus.addCharacteristic(Sequence_Number);
 
   // add service
@@ -243,8 +269,10 @@ void loop() {
     // while the central is still connected to peripheral:
     while (central.connected()) {
       SNprev = SN;
-      if (Sequence_Number.written()) SN = Sequence_Number.value();
+      if (Sequence_Number.written()) SN = (Sequence_Number.value());
       if (SN != SNprev) {
+        Send_Flags = (SN >> 20);
+        SN &= 0x7FFFF;        
         grint = Gyro_Roll.value();
         gpint = Gyro_Pitch.value();
         gyint = Gyro_Yaw.value();
@@ -303,7 +331,7 @@ void loop() {
         }
 #endif
 
-            if ((SN & 7) == 7) {
+            if ((Send_Flags & Heartbeat_Flag) != 0) {
 #ifndef nRF52840        
               digitalWrite(LED_USER, HIGH);
               delay(10);

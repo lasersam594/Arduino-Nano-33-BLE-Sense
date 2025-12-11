@@ -46,9 +46,9 @@
 // Select Nano BLE 33 Sense Rev1 or Rev2
 #define Rev2
 
-// User parameters
-#define data1 1           // Sends data to serial port if 1, LEDs-only on Nano if 0
-#define verbose1 1        // Display labels if 1, data-only if 0
+// User parametersm
+#define data1 0           // Sends data to serial port if 1, LEDs-only on Nano if 0
+#define verbose1 0        // Display labels if 1, data-only if 0
 #define senddiag1 0       // Include diagnostic information iff 1.  TBD, currently one integer (diag) is coded.
 #define GyroAutoCal 1     // Perform automatic Gyro offset compensation at startup: The board must be stationary
                           //  while the RGB LEDs are blinking.  If not enabled, use #define GR/GP/GY_COR values.
@@ -272,11 +272,11 @@ void loop() {
     sprintf(buffer, "%5.2f", az);
     Serial.print(buffer);
     if (verbose1 == 1) Serial.print(" | ");
+  }
 
   led = (az * 255);
   if (led < 180) digitalWrite(LED_PWR, HIGH);  // Turn on LED_PWR if tilt is more than ~45 degrees
   else digitalWrite(LED_PWR, LOW);             // analogWrite(LED_PWR, led); Using analogWrite hangs here, even with a cosntant???
-  }
 
   // Gyroscope
 
